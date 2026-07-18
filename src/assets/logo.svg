@@ -1,0 +1,13 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" rx="224" fill="#111827"/>
+  <!-- D mark -->
+  <path d="M280 220h250c170 0 290 110 290 292s-120 292-290 292H280V220z" fill="#0F766E"/>
+  <path d="M400 340h120c95 0 155 60 155 172s-60 172-155 172H400V340z" fill="#111827"/>
+  <!-- Wave bars -->
+  <rect x="430" y="460" width="36" height="100" rx="18" fill="#14B8A6"/>
+  <rect x="486" y="420" width="36" height="180" rx="18" fill="#F59E0B"/>
+  <rect x="542" y="480" width="36" height="80" rx="18" fill="#14B8A6"/>
+  <!-- Mic stand -->
+  <path d="M504 610v50c0 28-22 50-50 50h-8" stroke="#111827" stroke-width="28" stroke-linecap="round"/>
+  <path d="M430 710h100" stroke="#111827" stroke-width="28" stroke-linecap="round"/>
+</svg>
