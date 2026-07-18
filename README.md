@@ -33,11 +33,19 @@ DictateKit is a fork of [OpenWhispr](https://github.com/OpenWhispr/openwhispr), 
 - Node.js **24+** (see `.nvmrc`)
 - Platform build tools for native helpers (Xcode CLT on macOS, etc.)
 
+## Download (macOS Apple Silicon)
+
+- [DictateKit-0.1.0-arm64.dmg](https://github.com/vickhunter/dictatekit/releases/download/v0.1.0/DictateKit-0.1.0-arm64.dmg)
+- [All releases](https://github.com/vickhunter/dictatekit/releases)
+
+First launch may need right-click → **Open** (unsigned build).
+
 ## Quick start (development)
 
 ```bash
-git clone <your-fork-url> dictatekit
+git clone https://github.com/vickhunter/dictatekit.git
 cd dictatekit
+nvm use 24
 npm install
 npm run dev
 ```
