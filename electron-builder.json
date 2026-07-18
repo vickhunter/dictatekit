@@ -257,9 +257,9 @@
   },
   "publish": {
     "provider": "github",
-    "owner": "DictateKit",
+    "owner": "vickhunter",
     "repo": "dictatekit",
     "private": false,
-    "releaseType": "draft"
+    "releaseType": "release"
   }
 }

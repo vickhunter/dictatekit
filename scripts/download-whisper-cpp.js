@@ -11,7 +11,8 @@ const {
   cleanupFiles,
 } = require("./lib/download-utils");
 
-const WHISPER_CPP_REPO = "DictateKit/whisper.cpp";
+// Upstream OpenWhispr-built whisper.cpp binaries (not hosted on this fork yet).
+const WHISPER_CPP_REPO = "OpenWhispr/whisper.cpp";
 
 // Version can be pinned via environment variable for reproducible builds
 const VERSION_OVERRIDE = process.env.WHISPER_CPP_VERSION || null;
