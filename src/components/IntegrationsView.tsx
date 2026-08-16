@@ -25,7 +25,6 @@ const API_DOCS_URL = "https://docs.openwhispr.com/api/overview";
 
 interface IntegrationsViewProps {
   isPaid: boolean;
-  onUpgrade: () => void;
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -36,7 +35,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function IntegrationsView({ isPaid, onUpgrade }: IntegrationsViewProps) {
+export default function IntegrationsView({ isPaid }: IntegrationsViewProps) {
   const { t } = useTranslation();
   const { gcalAccounts, setGcalAccounts, gcalPrimaryOnly, setGcalPrimaryOnly } = useSettingsStore();
   const [isConnecting, setIsConnecting] = useState(false);
@@ -240,11 +239,7 @@ export default function IntegrationsView({ isPaid, onUpgrade }: IntegrationsView
                 >
                   {t("integrations.api.manage")}
                 </Button>
-              ) : (
-                <Button size="sm" onClick={onUpgrade} className="shrink-0">
-                  {t("integrations.api.viewPlans")}
-                </Button>
-              )}
+              ) : null}
             </div>
           </SettingsPanelRow>
         </SettingsPanel>
@@ -252,12 +247,12 @@ export default function IntegrationsView({ isPaid, onUpgrade }: IntegrationsView
 
       <div>
         <SectionLabel>{t("integrations.sections.mcp")}</SectionLabel>
-        <McpIntegrationCard isPaid={isPaid} onUpgrade={onUpgrade} />
+        <McpIntegrationCard isPaid={isPaid} />
       </div>
 
       <div>
         <SectionLabel>{t("integrations.sections.cli")}</SectionLabel>
-        <CliIntegrationCard isPaid={isPaid} onUpgrade={onUpgrade} />
+        <CliIntegrationCard isPaid={isPaid} />
       </div>
 
       {!hasAccounts && (

@@ -34,15 +34,11 @@ interface ControlPanelSidebarProps {
   onOpenSettings: () => void;
   onOpenSearch?: () => void;
   onOpenReferrals?: () => void;
-  onUpgrade?: () => void;
-  isOverLimit?: boolean;
   userName?: string | null;
   userEmail?: string | null;
   userImage?: string | null;
   isSignedIn?: boolean;
   authLoaded?: boolean;
-  isProUser?: boolean;
-  usageLoaded?: boolean;
   updateAction?: React.ReactNode;
 }
 
@@ -52,15 +48,11 @@ export default function ControlPanelSidebar({
   onOpenSettings,
   onOpenSearch,
   onOpenReferrals,
-  onUpgrade: _onUpgrade,
-  isOverLimit: _isOverLimit,
   userName,
   userEmail,
   userImage,
   isSignedIn,
   authLoaded,
-  isProUser: _isProUser,
-  usageLoaded: _usageLoaded,
   updateAction,
 }: ControlPanelSidebarProps) {
   const { t } = useTranslation();

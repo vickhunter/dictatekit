@@ -2472,7 +2472,8 @@
     "rollingLimit": "週間制限（ローリング方式）",
     "upgradeToPro": "Proにアップグレード",
     "useYourOwnKey": "自分のAPIキーを使用",
-    "upgradeUnlimited": "Proにアップグレード — 無制限の文字起こし"
+    "upgradeUnlimited": "Proにアップグレード — 無制限の文字起こし",
+    "cloudLimitReachedHint": "ローカル文字起こし (Whisper / Parakeet) は無制限で、ここには集計されません。"
   },
   "support": {
     "documentation": "ドキュメント",

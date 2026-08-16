@@ -2472,7 +2472,8 @@
     "rollingLimit": "Limite settimanale mobile",
     "upgradeToPro": "Passa a Pro",
     "useYourOwnKey": "Usa la tua chiave API",
-    "upgradeUnlimited": "Passa a Pro — trascrizioni illimitate"
+    "upgradeUnlimited": "Passa a Pro — trascrizioni illimitate",
+    "cloudLimitReachedHint": "La trascrizione locale (Whisper / Parakeet) resta illimitata e non viene mai conteggiata qui."
   },
   "support": {
     "documentation": "Documentazione",

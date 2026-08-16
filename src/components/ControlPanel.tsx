@@ -2,7 +2,6 @@ import React, { Suspense, useState, useEffect, useRef, useCallback } from "react
 import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Download, RefreshCw, Loader2, AlertTriangle, Zap, ChevronLeft } from "lucide-react";
-import UpgradePrompt from "./UpgradePrompt";
 import PostMigrationOnboarding from "./PostMigrationOnboarding";
 import { ConfirmDialog, AlertDialog } from "./ui/dialog";
 import { useDialogs } from "../hooks/useDialogs";
@@ -73,10 +72,7 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
   const history = useTranscriptions();
   const [isLoading, setIsLoading] = useState(true);
   const [showSettings, setShowSettings] = useState(!!initialSettingsSection);
-  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
   const [showPostMigration, setShowPostMigration] = useState(false);
-  const [limitData, setLimitData] = useState<{ wordsUsed: number; limit: number } | null>(null);
-  const hasShownUpgradePrompt = useRef(false);
   const [settingsSection, setSettingsSection] = useState<string | undefined>(
     initialSettingsSection
   );
@@ -229,28 +225,6 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
       updateErrorToastShown.current = null;
     }
   }, [updateError, toast, t]);
-
-  useEffect(() => {
-    const dispose = window.electronAPI?.onLimitReached?.(
-      (data: { wordsUsed: number; limit: number }) => {
-        if (!hasShownUpgradePrompt.current) {
-          hasShownUpgradePrompt.current = true;
-          setLimitData(data);
-          setShowUpgradePrompt(true);
-        } else {
-          toast({
-            title: t("controlPanel.limit.weeklyTitle"),
-            description: t("controlPanel.limit.weeklyDescription"),
-            duration: 5000,
-          });
-        }
-      }
-    );
-
-    return () => {
-      dispose?.();
-    };
-  }, [toast, t]);
 
   useEffect(() => {
     if (!usage?.isPastDue || !usage.hasLoaded) return;
@@ -746,13 +720,6 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
         onOk={() => {}}
       />
 
-      <UpgradePrompt
-        open={showUpgradePrompt}
-        onOpenChange={setShowUpgradePrompt}
-        wordsUsed={limitData?.wordsUsed}
-        limit={limitData?.limit}
-      />
-
       <PostMigrationOnboarding
         open={showPostMigration}
         onOpenChange={setShowPostMigration}
@@ -821,18 +788,11 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
               setShowSettings(true);
             }}
             onOpenReferrals={() => setShowReferrals(true)}
-            onUpgrade={() => {
-              setSettingsSection("plansBilling");
-              setShowSettings(true);
-            }}
-            isOverLimit={usage?.isOverLimit ?? false}
             userName={user?.name}
             userEmail={user?.email}
             userImage={user?.image}
             isSignedIn={isSignedIn}
             authLoaded={authLoaded}
-            isProUser={!!(usage?.isSubscribed || usage?.isTrial)}
-            usageLoaded={usage?.hasLoaded ?? false}
             updateAction={
               !updateStatus.isDevelopment &&
               (updateStatus.updateAvailable ||
@@ -1021,13 +981,7 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
             )}
             {activeView === "integrations" && (
               <Suspense fallback={null}>
-                <IntegrationsView
-                  isPaid={!!(usage?.isSubscribed || usage?.isTrial)}
-                  onUpgrade={() => {
-                    setSettingsSection("plansBilling");
-                    setShowSettings(true);
-                  }}
-                />
+                <IntegrationsView isPaid={!!(usage?.isSubscribed || usage?.isTrial)} />
               </Suspense>
             )}
           </div>

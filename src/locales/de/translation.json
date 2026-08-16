@@ -2472,7 +2472,8 @@
     "rollingLimit": "Rollierendes Wochenlimit",
     "upgradeToPro": "Auf Pro upgraden",
     "useYourOwnKey": "Eigenen API-Schlüssel verwenden",
-    "upgradeUnlimited": "Auf Pro upgraden – unbegrenzte Transkriptionen"
+    "upgradeUnlimited": "Auf Pro upgraden – unbegrenzte Transkriptionen",
+    "cloudLimitReachedHint": "Lokale Transkription (Whisper / Parakeet) bleibt unbegrenzt und wird hier nie mitgezählt."
   },
   "support": {
     "documentation": "Dokumentation",

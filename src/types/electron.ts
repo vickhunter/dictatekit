@@ -1384,12 +1384,6 @@ declare global {
         diarized?: boolean;
       }>;
 
-      // Usage limit events
-      notifyLimitReached?: (data: { wordsUsed: number; limit: number }) => void;
-      onLimitReached?: (
-        callback: (data: { wordsUsed: number; limit: number }) => void
-      ) => () => void;
-
       // Workspace invitation deep link
       onWorkspaceInvitationToken?: (callback: (token: string) => void) => () => void;
 

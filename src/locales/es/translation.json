@@ -2520,7 +2520,8 @@
     "rollingLimit": "Límite semanal renovable",
     "upgradeToPro": "Actualizar a Pro",
     "useYourOwnKey": "Usar tu propia clave API",
-    "upgradeUnlimited": "Actualizar a Pro — transcripciones ilimitadas"
+    "upgradeUnlimited": "Actualizar a Pro — transcripciones ilimitadas",
+    "cloudLimitReachedHint": "La transcripción local (Whisper / Parakeet) es ilimitada y nunca se contabiliza aquí."
   },
   "support": {
     "documentation": "Documentación",

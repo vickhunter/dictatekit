@@ -2278,7 +2278,8 @@
     "rollingLimit": "Rolling weekly limit",
     "upgradeToPro": "Upgrade to Pro",
     "useYourOwnKey": "Use Your Own Key",
-    "upgradeUnlimited": "Upgrade to Pro — unlimited transcriptions"
+    "upgradeUnlimited": "Upgrade to Pro — unlimited transcriptions",
+    "cloudLimitReachedHint": "Local transcription (Whisper / Parakeet) stays unlimited and is never counted here."
   },
   "notes": {
     "sidebar": {

@@ -2476,7 +2476,8 @@
     "rollingLimit": "Скользящий недельный лимит",
     "upgradeToPro": "Перейти на Pro",
     "useYourOwnKey": "Свой API-ключ",
-    "upgradeUnlimited": "Pro — без ограничений"
+    "upgradeUnlimited": "Pro — без ограничений",
+    "cloudLimitReachedHint": "Локальная транскрипция (Whisper / Parakeet) не ограничена и здесь не учитывается."
   },
   "support": {
     "documentation": "Документация",

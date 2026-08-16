@@ -1,36 +1,23 @@
-import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useUsage } from "../hooks/useUsage";
-import { useToast } from "./ui/useToast";
 import { Badge } from "./ui/badge";
 import { Progress } from "./ui/progress";
 import { Button } from "./ui/button";
-import { useSettingsStore } from "../stores/settingsStore";
 
+/**
+ * Factual usage readout for signed-in DictateKit Cloud accounts.
+ *
+ * Reports what the cloud plan allows and how much of it is left. It deliberately
+ * carries no upgrade CTA and fires no "approaching limit" nag — see
+ * src/config/promotions.ts. Local transcription is unlimited and never counted here.
+ */
 export default function UsageDisplay() {
   const { t } = useTranslation();
   const usage = useUsage();
-  const { toast } = useToast();
-  const hasShownApproachingToast = useRef(false);
-
-  // One-time toast when approaching limit (>80%)
-  useEffect(() => {
-    if (usage?.isApproachingLimit && !hasShownApproachingToast.current) {
-      hasShownApproachingToast.current = true;
-      toast({
-        title: t("usage.approachingLimit"),
-        description: t("usage.approachingLimitDescription", {
-          wordsUsed: usage.wordsUsed.toLocaleString(),
-          limit: usage.limit.toLocaleString(),
-        }),
-        duration: 6000,
-      });
-    }
-  }, [usage?.isApproachingLimit, usage?.wordsUsed, usage?.limit, toast, t]);
 
   if (!usage) return null;
 
-  // Pro plan or trial — minimal display
+  // Paid plan or trial — status only.
   if (usage.isSubscribed) {
     return (
       <div className="bg-card border border-border rounded-xl p-4 space-y-3">
@@ -58,7 +45,7 @@ export default function UsageDisplay() {
     );
   }
 
-  // Free plan
+  // Free plan — meter only.
   const percentage = usage.limit > 0 ? Math.min(100, (usage.wordsUsed / usage.limit) * 100) : 0;
   const progressColor =
     percentage >= 100
@@ -87,61 +74,23 @@ export default function UsageDisplay() {
           <span className="text-sm tabular-nums text-muted-foreground">
             {usage.wordsUsed.toLocaleString()} / {usage.limit.toLocaleString()}
           </span>
-          {usage.isApproachingLimit && (
+          {usage.isApproachingLimit ? (
             <span className="text-xs text-warning">
               {t("usage.wordsRemaining", {
                 count: usage.wordsRemaining,
                 remaining: usage.wordsRemaining.toLocaleString(),
               })}
             </span>
-          )}
-          {!usage.isApproachingLimit && !usage.isOverLimit && (
-            <span className="text-xs text-muted-foreground">{t("usage.rollingLimit")}</span>
+          ) : (
+            !usage.isOverLimit && (
+              <span className="text-xs text-muted-foreground">{t("usage.rollingLimit")}</span>
+            )
           )}
         </div>
       </div>
 
-      {usage.isOverLimit ? (
-        <div className="flex gap-2">
-          <Button
-            size="sm"
-            className="bg-primary hover:bg-primary/90"
-            onClick={() => usage.openCheckout()}
-          >
-            {t("usage.upgradeToPro")}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              const s = useSettingsStore.getState();
-              s.setTranscriptionMode("providers");
-              s.setCloudTranscriptionMode("byok");
-              window.location.reload();
-            }}
-          >
-            {t("usage.useYourOwnKey")}
-          </Button>
-        </div>
-      ) : usage.isApproachingLimit ? (
-        <Button
-          size="sm"
-          className="bg-primary hover:bg-primary/90"
-          onClick={() => usage.openCheckout()}
-        >
-          {t("usage.upgradeToPro")}
-        </Button>
-      ) : (
-        <a
-          href="#"
-          className="text-primary hover:text-primary/80 text-sm inline-block"
-          onClick={(e) => {
-            e.preventDefault();
-            usage.openCheckout();
-          }}
-        >
-          {t("usage.upgradeUnlimited")}
-        </a>
+      {usage.isOverLimit && (
+        <p className="text-xs text-muted-foreground">{t("usage.cloudLimitReachedHint")}</p>
       )}
     </div>
   );

@@ -104,6 +104,7 @@ import { useSettingsStore } from "../stores/settingsStore";
 import { canManageSystemAudioInApp } from "../utils/systemAudioAccess";
 import WorkspaceSection from "./settings/WorkspaceSection";
 import { WORKSPACES_ENABLED } from "../lib/features";
+import { PROMOTIONS_ENABLED } from "../config/promotions";
 
 const formatAmount = (cents: number, currency: string) =>
   (cents / 100).toLocaleString(undefined, { style: "currency", currency });
@@ -923,20 +924,6 @@ export default function SettingsPage({
 
   const { theme, setTheme } = useTheme();
   const usage = useUsage();
-  const hasShownApproachingToast = useRef(false);
-  useEffect(() => {
-    if (usage?.isApproachingLimit && !hasShownApproachingToast.current) {
-      hasShownApproachingToast.current = true;
-      toast({
-        title: t("settingsPage.account.toasts.approachingLimit.title"),
-        description: t("settingsPage.account.toasts.approachingLimit.description", {
-          used: usage.wordsUsed.toLocaleString(i18n.language),
-          limit: usage.limit.toLocaleString(i18n.language),
-        }),
-        duration: 6000,
-      });
-    }
-  }, [usage?.isApproachingLimit, usage?.wordsUsed, usage?.limit, toast, t, i18n.language]);
 
   const installTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -1685,28 +1672,6 @@ export default function SettingsPage({
                     </SettingsRow>
                   </SettingsPanelRow>
                 </SettingsPanel>
-
-                <div className="rounded-lg border border-primary/20 dark:border-primary/15 bg-primary/3 dark:bg-primary/6 p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-md bg-primary/10 dark:bg-primary/15 flex items-center justify-center shrink-0 mt-0.5">
-                      <Sparkles className="w-4 h-4 text-primary" />
-                    </div>
-                    <div className="min-w-0 flex-1 space-y-2.5">
-                      <div>
-                        <p className="text-xs font-medium text-foreground">
-                          {t("settingsPage.account.trialCta.title")}
-                        </p>
-                        <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
-                          {t("settingsPage.account.trialCta.description")}
-                        </p>
-                      </div>
-                      <Button onClick={startOnboarding} size="sm" className="w-full">
-                        <UserCircle className="mr-1.5 h-3.5 w-3.5" />
-                        {t("settingsPage.account.trialCta.button")}
-                      </Button>
-                    </div>
-                  </div>
-                </div>
               </>
             ) : (
               <>
@@ -1746,404 +1711,425 @@ export default function SettingsPage({
               </>
             ) : isLoaded ? (
               <>
-                <SectionHeader title={t("settingsPage.account.pricing.title")} />
-                <div className={`grid gap-1.5 ${isCompact ? "grid-cols-2" : "grid-cols-4"}`}>
-                  {/* Free */}
-                  <div
-                    className={cn(
-                      "rounded-md p-2.5 flex flex-col",
-                      !usage?.isSubscribed && !usage?.isTrial
-                        ? "border-2 border-primary/30 bg-primary/3 dark:border-primary/20 dark:bg-primary/5"
-                        : "border border-border/50 dark:border-border-subtle/60 bg-card/30 dark:bg-surface-2/30"
-                    )}
-                  >
-                    <p className="text-xs font-semibold text-foreground">
-                      {t("settingsPage.account.pricing.free.name")}
-                    </p>
-                    <div className="flex items-baseline gap-0.5 mt-0.5">
-                      <span className="text-lg font-bold text-foreground">
-                        {t("settingsPage.account.pricing.free.price")}
-                      </span>
-                      <span className="text-[9px] text-muted-foreground">
-                        / {t("settingsPage.account.pricing.free.period")}
-                      </span>
-                    </div>
-                    <ul className="space-y-0.5 mt-2 flex-1">
-                      {(
-                        t("settingsPage.account.pricing.free.features", {
-                          returnObjects: true,
-                        }) as string[]
-                      ).map((feature, i) =>
-                        feature.startsWith("## ") ? (
-                          <li
-                            key={i}
-                            className={`text-[8px] font-semibold uppercase tracking-wide text-muted-foreground/60 ${i > 0 ? "pt-1.5" : ""}`}
-                          >
-                            {feature.slice(3)}
-                          </li>
-                        ) : (
-                          <li
-                            key={i}
-                            className="flex items-start gap-1 text-[10px] text-muted-foreground leading-tight"
-                          >
-                            <Check size={9} className="mt-[2px] text-primary/70 shrink-0" />
-                            {feature}
-                          </li>
-                        )
-                      )}
-                    </ul>
-                    {!isSignedIn ? (
-                      <Button
-                        onClick={startOnboarding}
-                        variant="outline"
-                        size="sm"
-                        className="mt-2 w-full h-6 text-[10px]"
-                      >
-                        {t("settingsPage.account.signedOutPlans.button")}
-                      </Button>
-                    ) : usage?.isSubscribed && !usage?.isTrial ? (
-                      <Button
-                        onClick={handleBillingPortal}
-                        variant="outline"
-                        size="sm"
-                        className="mt-2 w-full h-6 text-[10px]"
-                      >
-                        {t("settingsPage.account.pricing.downgrade")}
-                      </Button>
-                    ) : (
-                      <div className="mt-2 text-center">
-                        <span className="text-[9px] font-medium text-primary/70">
-                          {t("settingsPage.account.pricing.currentPlan")}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Pro */}
-                  <div
-                    className={cn(
-                      "rounded-md border-2 p-2.5 flex flex-col",
-                      usage?.isSubscribed && usage?.plan === "pro"
-                        ? "border-primary/40 bg-primary/5 dark:border-primary/30 dark:bg-primary/8"
-                        : "border-primary/20 bg-primary/2 dark:border-primary/15 dark:bg-primary/3"
-                    )}
-                  >
-                    <p className="text-xs font-semibold text-foreground">
-                      {t("settingsPage.account.pricing.pro.name")}
-                    </p>
-                    <button
-                      onClick={() => setBillingState((prev) => ({ ...prev, pro: !prev.pro }))}
-                      role="switch"
-                      aria-checked={billingState.pro}
-                      className="flex items-center gap-1.5 mt-1"
-                    >
+                {/* Plan comparison + checkout: advertising, off in this fork. */}
+                {PROMOTIONS_ENABLED && (
+                  <>
+                    <SectionHeader title={t("settingsPage.account.pricing.title")} />
+                    <div className={`grid gap-1.5 ${isCompact ? "grid-cols-2" : "grid-cols-4"}`}>
+                      {/* Free */}
                       <div
-                        className={`relative w-7 h-4 rounded-full transition-colors ${billingState.pro ? "bg-primary" : "bg-muted"}`}
-                      >
-                        <div
-                          className={`absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white transition-transform ${billingState.pro ? "translate-x-3" : ""}`}
-                        />
-                      </div>
-                      <span className="text-[9px] text-muted-foreground">
-                        {t("settingsPage.account.pricing.billedYearly")}
-                      </span>
-                    </button>
-                    <div className="flex items-baseline gap-0.5 mt-1">
-                      <span className="text-lg font-bold text-foreground">
-                        {billingState.pro
-                          ? t("settingsPage.account.pricing.pro.annualEquivalent")
-                          : t("settingsPage.account.pricing.pro.monthlyPrice")}
-                      </span>
-                      <span className="text-[9px] text-muted-foreground">
-                        {t("settingsPage.account.pricing.pro.monthlyPeriod")}
-                      </span>
-                    </div>
-                    <p className="text-[9px] text-muted-foreground/70 mt-1.5">
-                      {t("settingsPage.account.pricing.pro.includesPrefix")}
-                    </p>
-                    <ul className="space-y-0.5 mt-1 flex-1">
-                      {(
-                        t("settingsPage.account.pricing.pro.features", {
-                          returnObjects: true,
-                        }) as string[]
-                      ).map((feature, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-1 text-[10px] text-muted-foreground leading-tight"
-                        >
-                          <Check size={9} className="mt-[2px] text-primary shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    {(usage?.isSubscribed && usage?.plan === "pro" && !usage?.isTrial) ||
-                    usage?.isTrial ? (
-                      <div className="mt-2 text-center">
-                        <span className="text-[9px] font-medium text-primary">
-                          {t("settingsPage.account.pricing.currentPlan")}
-                        </span>
-                      </div>
-                    ) : usage?.isSubscribed && usage?.plan === "business" ? (
-                      <Button
-                        onClick={() =>
-                          handleSwitchPlan(billingState.pro ? "annual" : "monthly", "pro")
-                        }
-                        disabled={previewLoading || usage.checkoutLoading}
-                        variant="outline"
-                        size="sm"
-                        className="mt-2 w-full h-6 text-[10px]"
-                      >
-                        {previewLoading ? (
-                          <Loader2 size={10} className="animate-spin" />
-                        ) : (
-                          t("settingsPage.account.pricing.downgrade")
+                        className={cn(
+                          "rounded-md p-2.5 flex flex-col",
+                          !usage?.isSubscribed && !usage?.isTrial
+                            ? "border-2 border-primary/30 bg-primary/3 dark:border-primary/20 dark:bg-primary/5"
+                            : "border border-border/50 dark:border-border-subtle/60 bg-card/30 dark:bg-surface-2/30"
                         )}
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() =>
-                          handleCheckout(billingState.pro ? "annual" : "monthly", "pro")
-                        }
-                        disabled={checkoutTier === "pro"}
-                        size="sm"
-                        className="mt-2 w-full h-6 text-[10px]"
                       >
-                        {checkoutTier === "pro" ? (
-                          <Loader2 size={10} className="animate-spin" />
-                        ) : (
-                          t("settingsPage.account.pricing.pro.cta")
-                        )}
-                      </Button>
-                    )}
-                  </div>
-
-                  {/* Business */}
-                  <div className="rounded-md border-2 border-primary/50 bg-primary/8 dark:border-primary/40 dark:bg-primary/10 p-2.5 flex flex-col relative">
-                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[8px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap shadow-sm">
-                      {t("settingsPage.account.pricing.business.badge")}
-                    </span>
-                    <p className="text-xs font-semibold text-foreground">
-                      {t("settingsPage.account.pricing.business.name")}
-                    </p>
-                    <button
-                      onClick={() =>
-                        setBillingState((prev) => ({ ...prev, business: !prev.business }))
-                      }
-                      role="switch"
-                      aria-checked={billingState.business}
-                      className="flex items-center gap-1.5 mt-1"
-                    >
-                      <div
-                        className={`relative w-7 h-4 rounded-full transition-colors ${billingState.business ? "bg-primary" : "bg-muted"}`}
-                      >
-                        <div
-                          className={`absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white transition-transform ${billingState.business ? "translate-x-3" : ""}`}
-                        />
-                      </div>
-                      <span className="text-[9px] text-muted-foreground">
-                        {t("settingsPage.account.pricing.billedYearly")}
-                      </span>
-                    </button>
-                    <div className="flex items-baseline gap-0.5 mt-1">
-                      <span className="text-lg font-bold text-foreground">
-                        {billingState.business
-                          ? t("settingsPage.account.pricing.business.annualEquivalent")
-                          : t("settingsPage.account.pricing.business.monthlyPrice")}
-                      </span>
-                      <span className="text-[9px] text-muted-foreground">
-                        {t("settingsPage.account.pricing.business.monthlyPeriod")}
-                      </span>
-                    </div>
-                    <p className="text-[9px] text-muted-foreground/70 mt-1.5">
-                      {t("settingsPage.account.pricing.business.includesPrefix")}
-                    </p>
-                    <ul className="space-y-0.5 mt-1 flex-1">
-                      {(
-                        t("settingsPage.account.pricing.business.features", {
-                          returnObjects: true,
-                        }) as string[]
-                      ).map((feature, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-1 text-[10px] text-muted-foreground leading-tight"
-                        >
-                          <Check size={9} className="mt-[2px] text-primary shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    {usage?.isSubscribed && usage?.plan === "business" && !usage?.isTrial ? (
-                      <div className="mt-2 text-center">
-                        <span className="text-[9px] font-medium text-primary">
-                          {t("settingsPage.account.pricing.currentPlan")}
-                        </span>
-                      </div>
-                    ) : usage?.isSubscribed && usage?.plan === "pro" && !usage?.isTrial ? (
-                      <Button
-                        onClick={() =>
-                          handleSwitchPlan(billingState.business ? "annual" : "monthly", "business")
-                        }
-                        disabled={previewLoading || usage.checkoutLoading}
-                        size="sm"
-                        className="mt-2 w-full h-6 text-[10px]"
-                      >
-                        {previewLoading ? (
-                          <Loader2 size={10} className="animate-spin" />
-                        ) : (
-                          t("settingsPage.account.pricing.upgrade")
-                        )}
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() =>
-                          handleCheckout(billingState.business ? "annual" : "monthly", "business")
-                        }
-                        disabled={checkoutTier === "business"}
-                        size="sm"
-                        className="mt-2 w-full h-6 text-[10px]"
-                      >
-                        {checkoutTier === "business" ? (
-                          <Loader2 size={10} className="animate-spin" />
-                        ) : (
-                          t("settingsPage.account.pricing.business.cta")
-                        )}
-                      </Button>
-                    )}
-                  </div>
-
-                  {/* Enterprise */}
-                  <div className="rounded-md border border-border/50 dark:border-border-subtle/60 bg-card/30 dark:bg-surface-2/30 p-2.5 flex flex-col">
-                    <p className="text-xs font-semibold text-foreground">
-                      {t("settingsPage.account.pricing.enterprise.name")}
-                    </p>
-                    <p className="text-[9px] text-muted-foreground mt-1">
-                      {t("settingsPage.account.pricing.enterprise.subtitle")}
-                    </p>
-                    <div className="flex items-baseline gap-0.5 mt-1">
-                      <span className="text-lg font-bold text-foreground">
-                        {t("settingsPage.account.pricing.enterprise.price")}
-                      </span>
-                    </div>
-                    <p className="text-[9px] text-muted-foreground/70 mt-1.5">
-                      {t("settingsPage.account.pricing.enterprise.includesPrefix")}
-                    </p>
-                    <ul className="space-y-0.5 mt-1 flex-1">
-                      {(
-                        t("settingsPage.account.pricing.enterprise.features", {
-                          returnObjects: true,
-                        }) as string[]
-                      ).map((feature, i) => (
-                        <li
-                          key={i}
-                          className="flex items-start gap-1 text-[10px] text-muted-foreground leading-tight"
-                        >
-                          <Check
-                            size={9}
-                            className="mt-[2px] text-purple-500 dark:text-purple-400 shrink-0"
-                          />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-2 w-full h-6 text-[10px]"
-                      onClick={() =>
-                        window.electronAPI?.openExternal?.("https://openwhispr.com/contact-sales")
-                      }
-                    >
-                      <Mail size={10} />
-                      {t("settingsPage.account.pricing.enterprise.cta")}
-                    </Button>
-                  </div>
-                </div>
-
-                <Dialog
-                  open={!!switchPreview}
-                  onOpenChange={(open) => !open && setSwitchPreview(null)}
-                >
-                  <DialogContent className="sm:max-w-90">
-                    <DialogHeader>
-                      <DialogTitle>
-                        {t("settingsPage.account.pricing.confirmSwitch.title")}
-                      </DialogTitle>
-                      <DialogDescription>
-                        {switchPreview &&
-                          t("settingsPage.account.pricing.confirmSwitch.description", {
-                            plan: switchPreview.tier === "pro" ? "Pro" : "Business",
-                            interval:
-                              switchPreview.plan === "annual"
-                                ? t("settingsPage.account.pricing.confirmSwitch.yearly")
-                                : t("settingsPage.account.pricing.confirmSwitch.monthly"),
-                          })}
-                      </DialogDescription>
-                    </DialogHeader>
-                    {switchPreview && (
-                      <div className="rounded-lg border border-border/50 dark:border-border-subtle/60 overflow-hidden">
-                        <div className="flex justify-between items-center px-3 py-2.5 bg-muted/40 dark:bg-surface-2/50">
-                          <span className="text-xs text-muted-foreground">
-                            {switchPreview.immediateAmount < 0
-                              ? t("settingsPage.account.pricing.confirmSwitch.accountCredit")
-                              : t("settingsPage.account.pricing.confirmSwitch.chargeToday")}
+                        <p className="text-xs font-semibold text-foreground">
+                          {t("settingsPage.account.pricing.free.name")}
+                        </p>
+                        <div className="flex items-baseline gap-0.5 mt-0.5">
+                          <span className="text-lg font-bold text-foreground">
+                            {t("settingsPage.account.pricing.free.price")}
                           </span>
-                          <span
-                            className={cn(
-                              "text-sm font-semibold",
-                              switchPreview.immediateAmount < 0
-                                ? "text-emerald-600 dark:text-emerald-400"
-                                : "text-foreground"
-                            )}
-                          >
-                            {formatAmount(
-                              Math.abs(switchPreview.immediateAmount),
-                              switchPreview.currency
-                            )}
+                          <span className="text-[9px] text-muted-foreground">
+                            / {t("settingsPage.account.pricing.free.period")}
                           </span>
                         </div>
-                        <div className="divide-y divide-border/40">
-                          <div className="flex justify-between items-center px-3 py-2">
-                            <span className="text-xs text-muted-foreground">
-                              {t("settingsPage.account.pricing.confirmSwitch.newPrice")}
-                            </span>
-                            <span className="text-xs font-medium text-foreground">
-                              {formatAmount(switchPreview.newPriceAmount, switchPreview.currency)}/
-                              {switchPreview.newInterval === "year"
-                                ? t("settingsPage.account.pricing.confirmSwitch.yr")
-                                : t("settingsPage.account.pricing.confirmSwitch.mo")}
+                        <ul className="space-y-0.5 mt-2 flex-1">
+                          {(
+                            t("settingsPage.account.pricing.free.features", {
+                              returnObjects: true,
+                            }) as string[]
+                          ).map((feature, i) =>
+                            feature.startsWith("## ") ? (
+                              <li
+                                key={i}
+                                className={`text-[8px] font-semibold uppercase tracking-wide text-muted-foreground/60 ${i > 0 ? "pt-1.5" : ""}`}
+                              >
+                                {feature.slice(3)}
+                              </li>
+                            ) : (
+                              <li
+                                key={i}
+                                className="flex items-start gap-1 text-[10px] text-muted-foreground leading-tight"
+                              >
+                                <Check size={9} className="mt-[2px] text-primary/70 shrink-0" />
+                                {feature}
+                              </li>
+                            )
+                          )}
+                        </ul>
+                        {!isSignedIn ? (
+                          <Button
+                            onClick={startOnboarding}
+                            variant="outline"
+                            size="sm"
+                            className="mt-2 w-full h-6 text-[10px]"
+                          >
+                            {t("settingsPage.account.signedOutPlans.button")}
+                          </Button>
+                        ) : usage?.isSubscribed && !usage?.isTrial ? (
+                          <Button
+                            onClick={handleBillingPortal}
+                            variant="outline"
+                            size="sm"
+                            className="mt-2 w-full h-6 text-[10px]"
+                          >
+                            {t("settingsPage.account.pricing.downgrade")}
+                          </Button>
+                        ) : (
+                          <div className="mt-2 text-center">
+                            <span className="text-[9px] font-medium text-primary/70">
+                              {t("settingsPage.account.pricing.currentPlan")}
                             </span>
                           </div>
-                          {switchPreview.nextBillingDate && (
-                            <div className="flex justify-between items-center px-3 py-2">
+                        )}
+                      </div>
+
+                      {/* Pro */}
+                      <div
+                        className={cn(
+                          "rounded-md border-2 p-2.5 flex flex-col",
+                          usage?.isSubscribed && usage?.plan === "pro"
+                            ? "border-primary/40 bg-primary/5 dark:border-primary/30 dark:bg-primary/8"
+                            : "border-primary/20 bg-primary/2 dark:border-primary/15 dark:bg-primary/3"
+                        )}
+                      >
+                        <p className="text-xs font-semibold text-foreground">
+                          {t("settingsPage.account.pricing.pro.name")}
+                        </p>
+                        <button
+                          onClick={() => setBillingState((prev) => ({ ...prev, pro: !prev.pro }))}
+                          role="switch"
+                          aria-checked={billingState.pro}
+                          className="flex items-center gap-1.5 mt-1"
+                        >
+                          <div
+                            className={`relative w-7 h-4 rounded-full transition-colors ${billingState.pro ? "bg-primary" : "bg-muted"}`}
+                          >
+                            <div
+                              className={`absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white transition-transform ${billingState.pro ? "translate-x-3" : ""}`}
+                            />
+                          </div>
+                          <span className="text-[9px] text-muted-foreground">
+                            {t("settingsPage.account.pricing.billedYearly")}
+                          </span>
+                        </button>
+                        <div className="flex items-baseline gap-0.5 mt-1">
+                          <span className="text-lg font-bold text-foreground">
+                            {billingState.pro
+                              ? t("settingsPage.account.pricing.pro.annualEquivalent")
+                              : t("settingsPage.account.pricing.pro.monthlyPrice")}
+                          </span>
+                          <span className="text-[9px] text-muted-foreground">
+                            {t("settingsPage.account.pricing.pro.monthlyPeriod")}
+                          </span>
+                        </div>
+                        <p className="text-[9px] text-muted-foreground/70 mt-1.5">
+                          {t("settingsPage.account.pricing.pro.includesPrefix")}
+                        </p>
+                        <ul className="space-y-0.5 mt-1 flex-1">
+                          {(
+                            t("settingsPage.account.pricing.pro.features", {
+                              returnObjects: true,
+                            }) as string[]
+                          ).map((feature, i) => (
+                            <li
+                              key={i}
+                              className="flex items-start gap-1 text-[10px] text-muted-foreground leading-tight"
+                            >
+                              <Check size={9} className="mt-[2px] text-primary shrink-0" />
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                        {(usage?.isSubscribed && usage?.plan === "pro" && !usage?.isTrial) ||
+                        usage?.isTrial ? (
+                          <div className="mt-2 text-center">
+                            <span className="text-[9px] font-medium text-primary">
+                              {t("settingsPage.account.pricing.currentPlan")}
+                            </span>
+                          </div>
+                        ) : usage?.isSubscribed && usage?.plan === "business" ? (
+                          <Button
+                            onClick={() =>
+                              handleSwitchPlan(billingState.pro ? "annual" : "monthly", "pro")
+                            }
+                            disabled={previewLoading || usage.checkoutLoading}
+                            variant="outline"
+                            size="sm"
+                            className="mt-2 w-full h-6 text-[10px]"
+                          >
+                            {previewLoading ? (
+                              <Loader2 size={10} className="animate-spin" />
+                            ) : (
+                              t("settingsPage.account.pricing.downgrade")
+                            )}
+                          </Button>
+                        ) : (
+                          <Button
+                            onClick={() =>
+                              handleCheckout(billingState.pro ? "annual" : "monthly", "pro")
+                            }
+                            disabled={checkoutTier === "pro"}
+                            size="sm"
+                            className="mt-2 w-full h-6 text-[10px]"
+                          >
+                            {checkoutTier === "pro" ? (
+                              <Loader2 size={10} className="animate-spin" />
+                            ) : (
+                              t("settingsPage.account.pricing.pro.cta")
+                            )}
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* Business */}
+                      <div className="rounded-md border-2 border-primary/50 bg-primary/8 dark:border-primary/40 dark:bg-primary/10 p-2.5 flex flex-col relative">
+                        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[8px] font-semibold px-2.5 py-0.5 rounded-full whitespace-nowrap shadow-sm">
+                          {t("settingsPage.account.pricing.business.badge")}
+                        </span>
+                        <p className="text-xs font-semibold text-foreground">
+                          {t("settingsPage.account.pricing.business.name")}
+                        </p>
+                        <button
+                          onClick={() =>
+                            setBillingState((prev) => ({ ...prev, business: !prev.business }))
+                          }
+                          role="switch"
+                          aria-checked={billingState.business}
+                          className="flex items-center gap-1.5 mt-1"
+                        >
+                          <div
+                            className={`relative w-7 h-4 rounded-full transition-colors ${billingState.business ? "bg-primary" : "bg-muted"}`}
+                          >
+                            <div
+                              className={`absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white transition-transform ${billingState.business ? "translate-x-3" : ""}`}
+                            />
+                          </div>
+                          <span className="text-[9px] text-muted-foreground">
+                            {t("settingsPage.account.pricing.billedYearly")}
+                          </span>
+                        </button>
+                        <div className="flex items-baseline gap-0.5 mt-1">
+                          <span className="text-lg font-bold text-foreground">
+                            {billingState.business
+                              ? t("settingsPage.account.pricing.business.annualEquivalent")
+                              : t("settingsPage.account.pricing.business.monthlyPrice")}
+                          </span>
+                          <span className="text-[9px] text-muted-foreground">
+                            {t("settingsPage.account.pricing.business.monthlyPeriod")}
+                          </span>
+                        </div>
+                        <p className="text-[9px] text-muted-foreground/70 mt-1.5">
+                          {t("settingsPage.account.pricing.business.includesPrefix")}
+                        </p>
+                        <ul className="space-y-0.5 mt-1 flex-1">
+                          {(
+                            t("settingsPage.account.pricing.business.features", {
+                              returnObjects: true,
+                            }) as string[]
+                          ).map((feature, i) => (
+                            <li
+                              key={i}
+                              className="flex items-start gap-1 text-[10px] text-muted-foreground leading-tight"
+                            >
+                              <Check size={9} className="mt-[2px] text-primary shrink-0" />
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                        {usage?.isSubscribed && usage?.plan === "business" && !usage?.isTrial ? (
+                          <div className="mt-2 text-center">
+                            <span className="text-[9px] font-medium text-primary">
+                              {t("settingsPage.account.pricing.currentPlan")}
+                            </span>
+                          </div>
+                        ) : usage?.isSubscribed && usage?.plan === "pro" && !usage?.isTrial ? (
+                          <Button
+                            onClick={() =>
+                              handleSwitchPlan(
+                                billingState.business ? "annual" : "monthly",
+                                "business"
+                              )
+                            }
+                            disabled={previewLoading || usage.checkoutLoading}
+                            size="sm"
+                            className="mt-2 w-full h-6 text-[10px]"
+                          >
+                            {previewLoading ? (
+                              <Loader2 size={10} className="animate-spin" />
+                            ) : (
+                              t("settingsPage.account.pricing.upgrade")
+                            )}
+                          </Button>
+                        ) : (
+                          <Button
+                            onClick={() =>
+                              handleCheckout(
+                                billingState.business ? "annual" : "monthly",
+                                "business"
+                              )
+                            }
+                            disabled={checkoutTier === "business"}
+                            size="sm"
+                            className="mt-2 w-full h-6 text-[10px]"
+                          >
+                            {checkoutTier === "business" ? (
+                              <Loader2 size={10} className="animate-spin" />
+                            ) : (
+                              t("settingsPage.account.pricing.business.cta")
+                            )}
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* Enterprise */}
+                      <div className="rounded-md border border-border/50 dark:border-border-subtle/60 bg-card/30 dark:bg-surface-2/30 p-2.5 flex flex-col">
+                        <p className="text-xs font-semibold text-foreground">
+                          {t("settingsPage.account.pricing.enterprise.name")}
+                        </p>
+                        <p className="text-[9px] text-muted-foreground mt-1">
+                          {t("settingsPage.account.pricing.enterprise.subtitle")}
+                        </p>
+                        <div className="flex items-baseline gap-0.5 mt-1">
+                          <span className="text-lg font-bold text-foreground">
+                            {t("settingsPage.account.pricing.enterprise.price")}
+                          </span>
+                        </div>
+                        <p className="text-[9px] text-muted-foreground/70 mt-1.5">
+                          {t("settingsPage.account.pricing.enterprise.includesPrefix")}
+                        </p>
+                        <ul className="space-y-0.5 mt-1 flex-1">
+                          {(
+                            t("settingsPage.account.pricing.enterprise.features", {
+                              returnObjects: true,
+                            }) as string[]
+                          ).map((feature, i) => (
+                            <li
+                              key={i}
+                              className="flex items-start gap-1 text-[10px] text-muted-foreground leading-tight"
+                            >
+                              <Check
+                                size={9}
+                                className="mt-[2px] text-purple-500 dark:text-purple-400 shrink-0"
+                              />
+                              {feature}
+                            </li>
+                          ))}
+                        </ul>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-2 w-full h-6 text-[10px]"
+                          onClick={() =>
+                            window.electronAPI?.openExternal?.(
+                              "https://openwhispr.com/contact-sales"
+                            )
+                          }
+                        >
+                          <Mail size={10} />
+                          {t("settingsPage.account.pricing.enterprise.cta")}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <Dialog
+                      open={!!switchPreview}
+                      onOpenChange={(open) => !open && setSwitchPreview(null)}
+                    >
+                      <DialogContent className="sm:max-w-90">
+                        <DialogHeader>
+                          <DialogTitle>
+                            {t("settingsPage.account.pricing.confirmSwitch.title")}
+                          </DialogTitle>
+                          <DialogDescription>
+                            {switchPreview &&
+                              t("settingsPage.account.pricing.confirmSwitch.description", {
+                                plan: switchPreview.tier === "pro" ? "Pro" : "Business",
+                                interval:
+                                  switchPreview.plan === "annual"
+                                    ? t("settingsPage.account.pricing.confirmSwitch.yearly")
+                                    : t("settingsPage.account.pricing.confirmSwitch.monthly"),
+                              })}
+                          </DialogDescription>
+                        </DialogHeader>
+                        {switchPreview && (
+                          <div className="rounded-lg border border-border/50 dark:border-border-subtle/60 overflow-hidden">
+                            <div className="flex justify-between items-center px-3 py-2.5 bg-muted/40 dark:bg-surface-2/50">
                               <span className="text-xs text-muted-foreground">
-                                {t("settingsPage.account.pricing.confirmSwitch.nextBilling")}
+                                {switchPreview.immediateAmount < 0
+                                  ? t("settingsPage.account.pricing.confirmSwitch.accountCredit")
+                                  : t("settingsPage.account.pricing.confirmSwitch.chargeToday")}
                               </span>
-                              <span className="text-xs font-medium text-foreground">
-                                {new Date(switchPreview.nextBillingDate).toLocaleDateString()}
+                              <span
+                                className={cn(
+                                  "text-sm font-semibold",
+                                  switchPreview.immediateAmount < 0
+                                    ? "text-emerald-600 dark:text-emerald-400"
+                                    : "text-foreground"
+                                )}
+                              >
+                                {formatAmount(
+                                  Math.abs(switchPreview.immediateAmount),
+                                  switchPreview.currency
+                                )}
                               </span>
                             </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                    <DialogFooter>
-                      <Button variant="outline" size="sm" onClick={() => setSwitchPreview(null)}>
-                        {t("settingsPage.account.pricing.confirmSwitch.cancel")}
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={confirmSwitchPlan}
-                        disabled={usage?.checkoutLoading}
-                      >
-                        {usage?.checkoutLoading ? (
-                          <Loader2 size={14} className="animate-spin" />
-                        ) : (
-                          t("settingsPage.account.pricing.confirmSwitch.confirm")
+                            <div className="divide-y divide-border/40">
+                              <div className="flex justify-between items-center px-3 py-2">
+                                <span className="text-xs text-muted-foreground">
+                                  {t("settingsPage.account.pricing.confirmSwitch.newPrice")}
+                                </span>
+                                <span className="text-xs font-medium text-foreground">
+                                  {formatAmount(
+                                    switchPreview.newPriceAmount,
+                                    switchPreview.currency
+                                  )}
+                                  /
+                                  {switchPreview.newInterval === "year"
+                                    ? t("settingsPage.account.pricing.confirmSwitch.yr")
+                                    : t("settingsPage.account.pricing.confirmSwitch.mo")}
+                                </span>
+                              </div>
+                              {switchPreview.nextBillingDate && (
+                                <div className="flex justify-between items-center px-3 py-2">
+                                  <span className="text-xs text-muted-foreground">
+                                    {t("settingsPage.account.pricing.confirmSwitch.nextBilling")}
+                                  </span>
+                                  <span className="text-xs font-medium text-foreground">
+                                    {new Date(switchPreview.nextBillingDate).toLocaleDateString()}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         )}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                        <DialogFooter>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSwitchPreview(null)}
+                          >
+                            {t("settingsPage.account.pricing.confirmSwitch.cancel")}
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={confirmSwitchPlan}
+                            disabled={usage?.checkoutLoading}
+                          >
+                            {usage?.checkoutLoading ? (
+                              <Loader2 size={14} className="animate-spin" />
+                            ) : (
+                              t("settingsPage.account.pricing.confirmSwitch.confirm")
+                            )}
+                          </Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </>
+                )}
 
                 {isSignedIn ? (
                   <>
@@ -2336,7 +2322,7 @@ export default function SettingsPage({
                                 ? t("settingsPage.account.billing.opening")
                                 : t("settingsPage.account.billing.manageBilling")}
                             </Button>
-                          ) : (
+                          ) : PROMOTIONS_ENABLED ? (
                             <Button
                               onClick={async () => {
                                 setCheckoutTier("plan-upgrade");
@@ -2363,7 +2349,7 @@ export default function SettingsPage({
                                 ? t("settingsPage.account.checkout.opening")
                                 : t("settingsPage.account.checkout.upgradeToPro")}
                             </Button>
-                          )}
+                          ) : null}
                         </SettingsPanelRow>
                       </SettingsPanel>
                     )}

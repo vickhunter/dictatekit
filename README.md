@@ -12,11 +12,40 @@ Press a hotkey, speak, and your words paste into whichever app is focused. Trans
 
 DictateKit is a fork of [OpenWhispr](https://github.com/OpenWhispr/openwhispr), rebranded for a **free, local-first** experience without Pro upsells in the UI.
 
-| Goal | Approach |
-|------|----------|
-| Cross-platform | Electron + React (not a VoiceInk Swift port) |
-| No trial / license nag | Local dictation works without buying anything |
-| Custom brand | DictateKit naming, app id `com.dictatekit.app` |
+| Goal                   | Approach                                                          |
+| ---------------------- | ----------------------------------------------------------------- |
+| Cross-platform         | Electron + React (not a VoiceInk Swift port)                      |
+| No trial / license nag | Local dictation works without buying anything                     |
+| No advertising         | Every upsell surface is removed — see [Advertising](#advertising) |
+| Custom brand           | DictateKit naming, app id `com.dictatekit.app`                    |
+
+## Advertising
+
+There is none. Upstream OpenWhispr ships a paid cloud tier, and this fork strips
+the promotion of it:
+
+- The upgrade dialog that popped up after a dictation is **deleted**, along with
+  its `limit-reached` IPC channel
+- "Approaching your weekly limit" nag toasts are **removed**
+- The "Try Pro free for 7 days" card and the plan-comparison grid are **gone**
+- "Upgrade to Pro" / "View plans" buttons are stripped from notes upload, the
+  realtime banner, and the API/MCP/CLI integration cards
+
+`src/config/promotions.ts` holds the `PROMOTIONS_ENABLED = false` switch that
+gates the few surfaces that were kept in place rather than deleted, so upstream
+merges stay easy to audit.
+
+Two things are deliberately **kept**, because removing them would hurt you:
+
+- **Manage Billing / Manage Subscription** — anyone who already pays for
+  DictateKit Cloud must be able to review or cancel from inside the app
+- **The factual usage meter** for signed-in cloud accounts — stating how many
+  words remain is information, not an ad
+
+Note that this changes the _interface_, not the _server_. Word limits on
+DictateKit Cloud are enforced by the remote API, so hiding a button cannot lift
+one. Local transcription (Whisper / Parakeet) has never been limited, is the
+default here, and never contacts a server at all.
 
 > **Name note:** `OpenDictation` already exists as another Mac project, so this fork uses **DictateKit**.
 
@@ -54,15 +83,15 @@ First run compiles native helpers and may download local model runtimes (whisper
 
 ### Useful scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Dev mode (Vite renderer + Electron) |
-| `npm start` | Run packaged electron entry |
-| `npm run build:mac` | macOS build |
-| `npm run build:win` | Windows build |
-| `npm run build:linux` | Linux build |
-| `npm test` | Unit tests |
-| `npm run typecheck` | TypeScript check |
+| Command               | Description                         |
+| --------------------- | ----------------------------------- |
+| `npm run dev`         | Dev mode (Vite renderer + Electron) |
+| `npm start`           | Run packaged electron entry         |
+| `npm run build:mac`   | macOS build                         |
+| `npm run build:win`   | Windows build                       |
+| `npm run build:linux` | Linux build                         |
+| `npm test`            | Unit tests                          |
+| `npm run typecheck`   | TypeScript check                    |
 
 ## Config / cache locations
 
