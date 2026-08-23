@@ -1,6 +1,6 @@
 {
   "name": "dictatekit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Cross-platform privacy-first voice dictation (Whisper / Parakeet). Fork of OpenWhispr, free local-first.",
   "main": "main.js",
   "private": true,
@@ -208,6 +208,7 @@
     "fast-xml-parser": "5.7.2",
     "ip-address": "10.2.0",
     "markdown-it": "14.2.0",
-    "tmp": "0.2.7"
+    "tmp": "0.2.7",
+    "@better-auth/core": "1.6.19"
   }
 }

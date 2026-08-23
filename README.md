@@ -62,12 +62,42 @@ default here, and never contacts a server at all.
 - Node.js **24+** (see `.nvmrc`)
 - Platform build tools for native helpers (Xcode CLT on macOS, etc.)
 
-## Download (macOS Apple Silicon)
+## Download (macOS)
 
-- [DictateKit-0.1.0-arm64.dmg](https://github.com/vickhunter/dictatekit/releases/download/v0.1.0/DictateKit-0.1.0-arm64.dmg)
-- [All releases](https://github.com/vickhunter/dictatekit/releases)
+Grab the DMG for your Mac from [Releases](https://github.com/vickhunter/dictatekit/releases):
 
-First launch may need right-click → **Open** (unsigned build).
+- **Apple Silicon** (M1 and later): `DictateKit-<version>-arm64.dmg`
+- **Intel**: `DictateKit-<version>.dmg` (x64)
+
+Not sure which you have? Apple menu → About This Mac. "Apple M…" is Apple Silicon; "Intel" is Intel.
+
+### First launch (unsigned build)
+
+Builds are not notarized, so macOS will warn on first open:
+
+1. Drag **DictateKit** to Applications, then right-click the app → **Open** → **Open**.
+2. On macOS 15 (Sequoia) and later the right-click bypass may not appear. Try to open the
+   app once, then go to **System Settings → Privacy & Security**, scroll down, and click
+   **Open Anyway**.
+3. If it still refuses, clear the quarantine flag from Terminal:
+
+   ```bash
+   xattr -cr /Applications/DictateKit.app
+   ```
+
+Then grant Microphone and Accessibility permissions when prompted — dictation pastes into
+the focused app, which needs Accessibility.
+
+### Cutting a release (maintainers)
+
+Releases are built by `.github/workflows/release.yml` (macOS arm64 + x64, Windows, Linux):
+
+```bash
+git tag v0.1.1 && git push origin v0.1.1
+```
+
+Signing is optional: without `APPLE_CERTIFICATE_BASE64` & co. the workflow produces
+unsigned (ad-hoc) builds. DMGs are also attached to each run as workflow artifacts.
 
 ## Quick start (development)
 
