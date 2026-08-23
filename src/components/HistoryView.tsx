@@ -52,6 +52,26 @@ export default function HistoryView({
   const dataRetentionEnabled = useSettingsStore((s) => s.dataRetentionEnabled);
   const { events, isLoading: eventsLoading, isConnected } = useUpcomingEvents();
 
+  const weekStats = useMemo(() => {
+    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    let words = 0;
+    let count = 0;
+    let speakMs = 0;
+    for (const item of history) {
+      const ts = new Date(item.timestamp).getTime();
+      if (Number.isNaN(ts) || ts < weekAgo) continue;
+      const text = (item.text || "").trim();
+      const n = text ? text.split(/\s+/).length : 0;
+      words += n;
+      count += 1;
+      // Fall back to a 130 wpm speaking-rate estimate when no audio duration was recorded
+      speakMs += item.audio_duration_ms ?? (n / 130) * 60_000;
+    }
+    // Words retyped at 40 wpm minus the time actually spent speaking
+    const minutesSaved = Math.max(0, Math.round(words / 40 - speakMs / 60_000));
+    return { words, count, minutesSaved };
+  }, [history]);
+
   const groupedHistory = useMemo(() => {
     if (history.length === 0) return [];
 
@@ -162,6 +182,37 @@ export default function HistoryView({
                   {t("controlPanel.aiCta.enable")}
                 </Button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {history.length > 0 && (
+          <div className="mb-4 flex items-center gap-6 rounded-lg border border-border/60 bg-card/60 px-4 py-3">
+            <div className="flex flex-col gap-1">
+              <span className="font-mono text-lg font-semibold leading-none text-foreground">
+                {weekStats.words.toLocaleString()}
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                {t("controlPanel.stats.wordsThisWeek")}
+              </span>
+            </div>
+            <div className="h-8 w-px bg-border/70" />
+            <div className="flex flex-col gap-1">
+              <span className="font-mono text-lg font-semibold leading-none text-foreground">
+                {t("controlPanel.stats.minutesValue", { minutes: weekStats.minutesSaved })}
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                {t("controlPanel.stats.savedVsTyping")}
+              </span>
+            </div>
+            <div className="h-8 w-px bg-border/70" />
+            <div className="flex flex-col gap-1">
+              <span className="font-mono text-lg font-semibold leading-none text-foreground">
+                {weekStats.count.toLocaleString()}
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                {t("controlPanel.stats.dictations")}
+              </span>
             </div>
           </div>
         )}

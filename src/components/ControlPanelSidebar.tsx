@@ -9,6 +9,7 @@ import {
   Gift,
   Settings,
   HelpCircle,
+  ShieldCheck,
   UserCircle,
   UserPlus,
   Search,
@@ -121,7 +122,7 @@ export default function ControlPanelSidebar({
                 "group relative flex items-center gap-2.5 w-full h-8 px-2.5 rounded-md outline-none transition-colors duration-150 text-left",
                 "focus-visible:ring-1 focus-visible:ring-primary/30",
                 isActive
-                  ? "bg-primary/8 dark:bg-primary/10"
+                  ? "bg-surface-raised shadow-[inset_2px_0_0_var(--color-border-active)]"
                   : "hover:bg-foreground/4 dark:hover:bg-white/4 active:bg-foreground/6"
               )}
             >
@@ -130,7 +131,7 @@ export default function ControlPanelSidebar({
                 className={cn(
                   "shrink-0 transition-colors duration-150",
                   isActive
-                    ? "text-primary"
+                    ? "text-foreground"
                     : "text-foreground/60 group-hover:text-foreground/75 dark:text-foreground/55 dark:group-hover:text-foreground/70"
                 )}
               />
@@ -226,10 +227,12 @@ export default function ControlPanelSidebar({
         <div className="mx-1 h-px bg-border/10 dark:bg-white/6 my-1.5!" />
 
         <div className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-md">
-          {userImage ? (
+          {isSignedIn && userImage ? (
             <img src={userImage} alt="" className="w-6 h-6 rounded-full shrink-0 object-cover" />
-          ) : (
+          ) : isSignedIn ? (
             <UserCircle size={18} className="shrink-0 text-foreground/50 dark:text-foreground/45" />
+          ) : (
+            <ShieldCheck size={16} className="shrink-0 text-foreground/60 dark:text-foreground/55" />
           )}
           <div className="flex-1 min-w-0">
             {isSignedIn && (userName || userEmail) ? (
@@ -244,9 +247,14 @@ export default function ControlPanelSidebar({
                 )}
               </>
             ) : authLoaded && !isSignedIn ? (
-              <p className="text-xs text-foreground/45 dark:text-foreground/55">
-                {t("sidebar.notSignedIn")}
-              </p>
+              <>
+                <p className="text-xs font-medium text-foreground/80 dark:text-foreground/80 leading-tight">
+                  {t("sidebar.localMode")}
+                </p>
+                <p className="text-[10px] font-mono text-foreground/50 dark:text-foreground/50 leading-tight">
+                  {t("sidebar.noAccountNeeded")}
+                </p>
+              </>
             ) : null}
           </div>
         </div>

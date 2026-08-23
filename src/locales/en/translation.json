@@ -418,7 +418,13 @@
       "enableButton": "Enable GPU",
       "dismissButton": "Not now"
     },
-    "backToNotes": "Back to notes"
+    "backToNotes": "Back to notes",
+    "stats": {
+      "wordsThisWeek": "words this week",
+      "savedVsTyping": "saved vs typing",
+      "dictations": "dictations",
+      "minutesValue": "≈{{minutes}} min"
+    }
   },
   "reasoning": {
     "mode": {
@@ -2116,7 +2122,9 @@
     "notSignedIn": "Not signed in",
     "chat": "Chat",
     "inviteTeammate": "Invite teammate",
-    "createWorkspace": "Create workspace"
+    "createWorkspace": "Create workspace",
+    "localMode": "Local mode",
+    "noAccountNeeded": "no account needed"
   },
   "workspaces": {
     "switcher": {

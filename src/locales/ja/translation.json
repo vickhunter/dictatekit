@@ -418,7 +418,13 @@
       "enableButton": "GPU を有効化",
       "dismissButton": "後で"
     },
-    "backToNotes": "ノートに戻る"
+    "backToNotes": "ノートに戻る",
+    "stats": {
+      "wordsThisWeek": "今週の単語数",
+      "savedVsTyping": "タイピング比の節約",
+      "dictations": "口述数",
+      "minutesValue": "約{{minutes}}分"
+    }
   },
   "reasoning": {
     "mode": {
@@ -2430,7 +2436,9 @@
     "notSignedIn": "未サインイン",
     "chat": "チャット",
     "inviteTeammate": "Invitar compañero",
-    "createWorkspace": "Crear espacio de trabajo"
+    "createWorkspace": "Crear espacio de trabajo",
+    "localMode": "ローカルモード",
+    "noAccountNeeded": "アカウント不要"
   },
   "chat": {
     "newChat": "新しいチャット",

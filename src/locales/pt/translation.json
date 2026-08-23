@@ -397,7 +397,13 @@
       "enableButton": "Ativar GPU",
       "dismissButton": "Agora não"
     },
-    "backToNotes": "Voltar para notas"
+    "backToNotes": "Voltar para notas",
+    "stats": {
+      "wordsThisWeek": "palavras esta semana",
+      "savedVsTyping": "poupado vs digitar",
+      "dictations": "ditados",
+      "minutesValue": "≈{{minutes}} min"
+    }
   },
   "reasoning": {
     "mode": {
@@ -2430,7 +2436,9 @@
     "notSignedIn": "Não conectado",
     "chat": "Chat",
     "inviteTeammate": "Invitar compañero",
-    "createWorkspace": "Crear espacio de trabajo"
+    "createWorkspace": "Crear espacio de trabajo",
+    "localMode": "Modo local",
+    "noAccountNeeded": "sem conta necessária"
   },
   "chat": {
     "newChat": "Novo chat",
