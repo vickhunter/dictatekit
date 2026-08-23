@@ -1,0 +1,19 @@
+{
+  "artboards": [
+    { "file": "Main.dc.html", "x": 0, "y": 0, "w": 1200, "h": 800, "title": "Home — Dictations" },
+    { "file": "Settings.dc.html", "x": 1300, "y": 0, "w": 1200, "h": 800, "title": "Settings — Hotkeys" },
+    { "file": "Overlay.dc.html", "x": 0, "y": 940, "w": 880, "h": 400, "title": "Dictation Pill States" },
+    { "file": "AltEditorialMono.dc.html", "x": 980, "y": 940, "w": 620, "h": 430, "title": "Alt A — Editorial Mono (sketch)" },
+    { "file": "AltSoftStudio.dc.html", "x": 1700, "y": 940, "w": 620, "h": 430, "title": "Alt B — Soft Studio (sketch)" }
+  ],
+  "annotations": [
+    {
+      "id": "direction-note",
+      "x": 2560,
+      "y": 60,
+      "w": 340,
+      "text": "Direction: Warm editorial studio.\nAmp's paper-and-ink density (mono timestamps, hairline rules, sage blocks for what you said) fused with Wispr Flow's cream softness.\n\nBuilt on the parchment palette already in src/index.css (#f9f6f1 / #2b1f14 / #c0a77d). Type: Newsreader (display), Instrument Sans (UI), Spline Sans Mono (meta).\n\nAlt A leans fully Amp (dense, mono, green). Alt B leans fully Wispr Flow (soft cards, coral, serif greeting). Transcript copy is sample; the Aug 18 rows are your real history."
+    }
+  ],
+  "launch": { "view": "canvas" }
+}
