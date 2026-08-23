@@ -93,7 +93,9 @@ the focused app, which needs Accessibility.
 Releases are built by `.github/workflows/release.yml` (macOS arm64 + x64, Windows, Linux):
 
 ```bash
-git tag v0.1.1 && git push origin v0.1.1
+# the tag must match the version in package.json
+git tag "v$(node -p "require('./package.json').version")"
+git push origin --tags
 ```
 
 Signing is optional: without `APPLE_CERTIFICATE_BASE64` & co. the workflow produces
