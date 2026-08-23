@@ -12,7 +12,7 @@
       "x": 2560,
       "y": 60,
       "w": 340,
-      "text": "Direction: Warm editorial studio.\nAmp's paper-and-ink density (mono timestamps, hairline rules, sage blocks for what you said) fused with Wispr Flow's cream softness.\n\nBuilt on the parchment palette already in src/index.css (#f9f6f1 / #2b1f14 / #c0a77d). Type: Newsreader (display), Instrument Sans (UI), Spline Sans Mono (meta).\n\nAlt A leans fully Amp (dense, mono, green). Alt B leans fully Wispr Flow (soft cards, coral, serif greeting). Transcript copy is sample; the Aug 18 rows are your real history."
+      "text": "Direction: Warm editorial studio.\nAmp's paper-and-ink density (mono timestamps, hairline rules, sage blocks for what you said) fused with Wispr Flow's cream softness.\n\nGrown from the parchment palette in src/index.css (#f9f6f1 / #2b1f14 / #c0a77d), tuned for contrast: paper #f7f4ed, ink #2b2118, brass #a98e5f. Type: Newsreader (display), Instrument Sans (UI), Spline Sans Mono (meta).\n\nAlt A leans fully Amp (dense, mono, green). Alt B leans fully Wispr Flow (soft cards, coral, serif greeting). Transcript copy is sample; the Aug 18 rows are your real history."
     }
   ],
   "launch": { "view": "canvas" }
