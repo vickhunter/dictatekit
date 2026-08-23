@@ -904,10 +904,16 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
   uiLanguage: normalizeUiLanguage(isBrowser ? localStorage.getItem("uiLanguage") : null),
   useLocalWhisper: readBoolean("useLocalWhisper", false),
   whisperModel: readString("whisperModel", "base"),
-  localTranscriptionProvider: (readString("localTranscriptionProvider", "whisper") === "nvidia"
+  // Parakeet TDT v3 is the recommended local model for new installs; existing
+  // setups (already-completed onboarding) keep whisper unless they opted in,
+  // so a default flip can never strand a user on a provider with no model.
+  localTranscriptionProvider: (readString(
+    "localTranscriptionProvider",
+    isBrowser && localStorage.getItem("hasCompletedOnboarding") === "true" ? "whisper" : "nvidia"
+  ) === "nvidia"
     ? "nvidia"
     : "whisper") as LocalTranscriptionProvider,
-  parakeetModel: readString("parakeetModel", ""),
+  parakeetModel: readString("parakeetModel", "parakeet-tdt-0.6b-v3"),
   allowOpenAIFallback: readBoolean("allowOpenAIFallback", false),
   allowLocalFallback: readBoolean("allowLocalFallback", false),
   fallbackWhisperModel: readString("fallbackWhisperModel", "base"),

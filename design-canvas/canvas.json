@@ -1,0 +1,64 @@
+{
+  "artboards": [
+    {
+      "file": "Main.dc.html",
+      "x": 0,
+      "y": 0,
+      "w": 1200,
+      "h": 800,
+      "title": "Home — Dictations"
+    },
+    {
+      "file": "Settings.dc.html",
+      "x": 1300,
+      "y": 0,
+      "w": 1200,
+      "h": 800,
+      "title": "Settings — Hotkeys"
+    },
+    {
+      "file": "Overlay.dc.html",
+      "x": 0,
+      "y": 940,
+      "w": 880,
+      "h": 400,
+      "title": "Dictation Pill States"
+    },
+    {
+      "file": "AltEditorialMono.dc.html",
+      "x": 980,
+      "y": 940,
+      "w": 620,
+      "h": 430,
+      "title": "Alt A — Editorial Mono (sketch)"
+    },
+    {
+      "file": "AltSoftStudio.dc.html",
+      "x": 1700,
+      "y": 940,
+      "w": 620,
+      "h": 430,
+      "title": "Alt B — Soft Studio (sketch)"
+    },
+    {
+      "file": "LogoBoard.dc.html",
+      "x": 0,
+      "y": 1510,
+      "w": 1200,
+      "h": 560,
+      "title": "Logo Concepts"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "direction-note",
+      "x": 2560,
+      "y": 60,
+      "w": 340,
+      "text": "Direction: Warm editorial studio.\nAmp's paper-and-ink density (mono timestamps, hairline rules, sage blocks for what you said) fused with Wispr Flow's cream softness.\n\nGrown from the parchment palette in src/index.css (#f9f6f1 / #2b1f14 / #c0a77d), tuned for contrast: paper #f7f4ed, ink #2b2118, brass #a98e5f. Type: Newsreader (display), Instrument Sans (UI), Spline Sans Mono (meta).\n\nAlt A leans fully Amp (dense, mono, green). Alt B leans fully Wispr Flow (soft cards, coral, serif greeting). Transcript copy is sample; the Aug 18 rows are your real history.\n\nv2: stats band (words / time saved / avg wpm), Import audio in the header, export action on rows, hotkey capture state in Settings, 'Cloud is optional' card, Local mode replaces the account row, and three logo concepts (bottom row). Time saved assumes 40 wpm typing vs 130 wpm speaking."
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  }
+}

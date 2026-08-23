@@ -418,7 +418,13 @@
       "enableButton": "啟用 GPU",
       "dismissButton": "暫時不要"
     },
-    "backToNotes": "返回筆記"
+    "backToNotes": "返回筆記",
+    "stats": {
+      "wordsThisWeek": "本週字數",
+      "savedVsTyping": "相比打字節省",
+      "dictations": "聽寫次數",
+      "minutesValue": "約{{minutes}}分鐘"
+    }
   },
   "reasoning": {
     "mode": {
@@ -2425,7 +2431,9 @@
     "notSignedIn": "尚未登入",
     "chat": "聊天",
     "inviteTeammate": "Invitar compañero",
-    "createWorkspace": "Crear espacio de trabajo"
+    "createWorkspace": "Crear espacio de trabajo",
+    "localMode": "本機模式",
+    "noAccountNeeded": "無需帳戶"
   },
   "chat": {
     "newChat": "新對話",
