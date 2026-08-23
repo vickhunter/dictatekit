@@ -89,7 +89,8 @@
     "desktop-app"
   ],
   "author": {
-    "name": "DictateKit contributors"
+    "name": "DictateKit contributors",
+    "email": "vickhunter@users.noreply.github.com"
   },
   "license": "MIT",
   "devDependencies": {
