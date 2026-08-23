@@ -1,6 +1,6 @@
 {
   "name": "dictatekit",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Cross-platform privacy-first voice dictation (Whisper / Parakeet). Fork of OpenWhispr, free local-first.",
   "main": "main.js",
   "private": true,
