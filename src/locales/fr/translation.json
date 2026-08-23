@@ -2190,7 +2190,8 @@
     "rollingLimit": "Limite hebdomadaire glissante",
     "upgradeToPro": "Passer à Pro",
     "useYourOwnKey": "Utiliser votre propre clé API",
-    "upgradeUnlimited": "Passer à Pro — transcriptions illimitées"
+    "upgradeUnlimited": "Passer à Pro — transcriptions illimitées",
+    "cloudLimitReachedHint": "La transcription locale (Whisper / Parakeet) reste illimitée et n'est jamais comptée ici."
   },
   "notes": {
     "sidebar": {

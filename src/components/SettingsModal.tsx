@@ -14,6 +14,8 @@ import {
 import SidebarModal, { type SidebarItem } from "./ui/SidebarModal";
 import SettingsPage, { SettingsSectionType } from "./SettingsPage";
 import { WORKSPACES_ENABLED } from "../lib/features";
+import { PROMOTIONS_ENABLED } from "../config/promotions";
+import { useAuth } from "../hooks/useAuth";
 
 export type { SettingsSectionType };
 
@@ -54,6 +56,10 @@ interface SettingsModalProps {
 
 export default function SettingsModal({ open, onOpenChange, initialSection }: SettingsModalProps) {
   const { t } = useTranslation();
+  const { isSignedIn } = useAuth();
+  // With promotions off there is no plan comparison to show, so the tab is only
+  // worth listing for signed-in users who may need to manage an existing subscription.
+  const showPlansBilling = PROMOTIONS_ENABLED || !!isSignedIn;
   const sidebarItems: SidebarItem<SettingsSectionType>[] = useMemo(
     () => [
       {
@@ -63,13 +69,17 @@ export default function SettingsModal({ open, onOpenChange, initialSection }: Se
         description: t("settingsModal.sections.account.description"),
         group: t("settingsModal.groups.account"),
       },
-      {
-        id: "plansBilling",
-        label: t("settingsModal.sections.plansBilling.label"),
-        icon: CreditCard,
-        description: t("settingsModal.sections.plansBilling.description"),
-        group: t("settingsModal.groups.account"),
-      },
+      ...(showPlansBilling
+        ? [
+            {
+              id: "plansBilling" as const,
+              label: t("settingsModal.sections.plansBilling.label"),
+              icon: CreditCard,
+              description: t("settingsModal.sections.plansBilling.description"),
+              group: t("settingsModal.groups.account"),
+            },
+          ]
+        : []),
       ...(WORKSPACES_ENABLED
         ? [
             {
@@ -124,7 +134,7 @@ export default function SettingsModal({ open, onOpenChange, initialSection }: Se
         group: t("settingsModal.groups.system"),
       },
     ],
-    [t]
+    [t, showPlansBilling]
   );
 
   const resolveSection = (section: string | undefined): SettingsSectionType => {

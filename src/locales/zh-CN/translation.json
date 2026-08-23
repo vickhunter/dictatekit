@@ -2467,7 +2467,8 @@
     "rollingLimit": "滚动周限额",
     "upgradeToPro": "升级到 Pro",
     "useYourOwnKey": "使用自己的 API Key",
-    "upgradeUnlimited": "升级到 Pro — 无限转录"
+    "upgradeUnlimited": "升级到 Pro — 无限转录",
+    "cloudLimitReachedHint": "本地转录（Whisper / Parakeet）不限量，且不计入此处用量。"
   },
   "support": {
     "documentation": "文档",

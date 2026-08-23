@@ -15,10 +15,9 @@ const MCP_DOCS_URL = "https://docs.openwhispr.com/integrations/mcp";
 
 interface McpIntegrationCardProps {
   isPaid: boolean;
-  onUpgrade: () => void;
 }
 
-export default function McpIntegrationCard({ isPaid, onUpgrade }: McpIntegrationCardProps) {
+export default function McpIntegrationCard({ isPaid }: McpIntegrationCardProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
@@ -92,11 +91,7 @@ export default function McpIntegrationCard({ isPaid, onUpgrade }: McpIntegration
           {t("integrations.mcp.learnMore")}
           <ExternalLink className="h-3 w-3" />
         </Button>
-      ) : (
-        <Button size="sm" onClick={onUpgrade}>
-          {t("integrations.mcp.viewPlans")}
-        </Button>
-      )}
+      ) : null}
     </div>
   );
 }

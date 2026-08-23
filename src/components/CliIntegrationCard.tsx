@@ -15,10 +15,9 @@ const CLOUD_LOGIN_CMD = "dictatekit auth login";
 
 interface CliIntegrationCardProps {
   isPaid: boolean;
-  onUpgrade: () => void;
 }
 
-export default function CliIntegrationCard({ isPaid, onUpgrade }: CliIntegrationCardProps) {
+export default function CliIntegrationCard({ isPaid }: CliIntegrationCardProps) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [docsLinkCopied, setDocsLinkCopied] = useState(false);
@@ -109,13 +108,7 @@ export default function CliIntegrationCard({ isPaid, onUpgrade }: CliIntegration
             ? t("integrations.cli.cloud.description")
             : t("integrations.cli.cloud.proRequired")}
         </p>
-        {isPaid ? (
-          <CopyableCommand command={CLOUD_LOGIN_CMD} />
-        ) : (
-          <Button size="sm" onClick={onUpgrade}>
-            {t("integrations.cli.viewPlans")}
-          </Button>
-        )}
+        {isPaid ? <CopyableCommand command={CLOUD_LOGIN_CMD} /> : null}
       </div>
     </div>
   );

@@ -3,13 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Zap, X } from "lucide-react";
 import { cn } from "../lib/utils";
 
-interface RealtimeTranscriptionBannerProps {
-  onUpgrade?: () => void;
-}
-
-export default function RealtimeTranscriptionBanner({
-  onUpgrade,
-}: RealtimeTranscriptionBannerProps) {
+export default function RealtimeTranscriptionBanner() {
   const { t } = useTranslation();
   const [dismissed, setDismissed] = useState(
     () => localStorage.getItem("realtimeProBannerDismissed") === "true"
@@ -33,14 +27,6 @@ export default function RealtimeTranscriptionBanner({
     >
       <Zap size={11} className="text-primary/40 shrink-0" />
       <p className="text-xs text-primary/40 flex-1 truncate">{t("notes.realtimeBanner.message")}</p>
-      {onUpgrade && (
-        <button
-          onClick={onUpgrade}
-          className="text-xs font-medium text-primary/50 hover:text-primary/70 transition-colors shrink-0"
-        >
-          {t("notes.realtimeBanner.upgrade")}
-        </button>
-      )}
       <button
         onClick={handleDismiss}
         className="p-0.5 rounded text-primary/25 hover:text-primary/50 transition-colors shrink-0"
