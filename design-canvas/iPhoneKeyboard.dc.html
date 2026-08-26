@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700&amp;family=Spline+Sans+Mono:wght@400..600&amp;display=swap">
+  <style>
+    body { margin: 0; font-family: "Instrument Sans", -apple-system, "Segoe UI", Helvetica, sans-serif; background: transparent; }
+    a { color: #8a6f42; } a:hover { color: #6f5731; }
+    @keyframes dk-bar { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+  </style>
+</helmet>
+<div style="width: 880px; height: 440px; box-sizing: border-box; background: #f7f4ed; border: 1px solid #d3c8b2; border-radius: 10px; padding: 36px 44px; display: flex; flex-direction: column; gap: 28px; color: #2b2118;">
+
+  <span style="font-family: 'Spline Sans Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; color: #776a56;">VOICE KEYBOARD &#183; REPLACES THE SYSTEM KEYBOARD IN ANY APP</span>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; flex-grow: 1;">
+
+    <!-- Idle keyboard panel -->
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="width: 390px; height: 232px; box-sizing: border-box; background: #f1ece1; border: 1px solid #d3c8b2; border-radius: 12px; display: flex; flex-direction: column; padding: 14px 16px; margin: 0 auto;">
+        <div style="flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: #2b2118; box-shadow: inset 0 0 0 2.5px #c8ab77; display: flex; align-items: center; justify-content: center;">
+            <svg width="24" height="24" viewBox="0 0 16 16" fill="none" stroke="#f7f4ed" stroke-width="1.6" stroke-linecap="round"><rect x="5.5" y="1.5" width="5" height="8" rx="2.5"></rect><path d="M3 7.5 a5 5 0 0 0 10 0 M8 12.5 V15"></path></svg>
+          </div>
+          <span style="font-size: 12.5px; color: #6b5f4f;">Tap and speak &#8212; text lands in the field</span>
+        </div>
+        <div style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; height: 44px;">
+          <div style="width: 44px; height: 36px; border-radius: 7px; background: #fdfbf6; border: 1px solid #e2daca; display: flex; align-items: center; justify-content: center;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b5f4f" stroke-width="1.4"><circle cx="8" cy="8" r="6"></circle><path d="M2 8 h12 M8 2 c-2.5 3.5 -2.5 8.5 0 12 c2.5 -3.5 2.5 -8.5 0 -12"></path></svg>
+          </div>
+          <span style="font-family: 'Spline Sans Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.06em; color: #a3947d;">DICTATEKIT</span>
+          <div style="width: 44px; height: 36px; border-radius: 7px; background: #fdfbf6; border: 1px solid #e2daca; display: flex; align-items: center; justify-content: center;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#6b5f4f" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4 H6 L2 8 L6 12 H14 Z M8.5 6.5 L11.5 9.5 M11.5 6.5 L8.5 9.5"></path></svg>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+        <span style="font-family: 'Spline Sans Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; color: #6b5f4f;">IDLE</span>
+        <span style="font-size: 12.5px; color: #776a56; text-align: center; max-width: 320px;">One 64px mic, globe to switch keyboards, backspace. No QWERTY &#8212; this keyboard does one thing.</span>
+      </div>
+    </div>
+
+    <!-- Listening keyboard panel -->
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+      <div style="width: 390px; height: 232px; box-sizing: border-box; background: #241c14; border: 1px solid #3a2f22; border-radius: 12px; display: flex; flex-direction: column; padding: 14px 16px; margin: 0 auto;">
+        <div style="display: flex; flex-direction: row; align-items: center; gap: 8px;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: #d95c40;"></span>
+          <span style="font-family: 'Spline Sans Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: 0.08em; color: #b3a48c;">LISTENING &#183; 0:04</span>
+        </div>
+        <div style="flex-grow: 1; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 5px;">
+          <div style="width: 4px; height: 22px; border-radius: 2px; background: #c8ab77; animation: dk-bar 0.9s ease-in-out infinite;"></div>
+          <div style="width: 4px; height: 44px; border-radius: 2px; background: #c8ab77; animation: dk-bar 0.9s ease-in-out 0.12s infinite;"></div>
+          <div style="width: 4px; height: 30px; border-radius: 2px; background: #e0cba0; animation: dk-bar 0.9s ease-in-out 0.24s infinite;"></div>
+          <div style="width: 4px; height: 54px; border-radius: 2px; background: #c8ab77; animation: dk-bar 0.9s ease-in-out 0.06s infinite;"></div>
+          <div style="width: 4px; height: 26px; border-radius: 2px; background: #c8ab77; animation: dk-bar 0.9s ease-in-out 0.3s infinite;"></div>
+          <div style="width: 4px; height: 46px; border-radius: 2px; background: #e0cba0; animation: dk-bar 0.9s ease-in-out 0.18s infinite;"></div>
+          <div style="width: 4px; height: 34px; border-radius: 2px; background: #c8ab77; animation: dk-bar 0.9s ease-in-out 0.36s infinite;"></div>
+        </div>
+        <div style="display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 24px; height: 52px;">
+          <div style="width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid #4d4030; display: flex; align-items: center; justify-content: center;">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#b3a48c" stroke-width="1.8" stroke-linecap="round"><path d="M4 4 L12 12 M12 4 L4 12"></path></svg>
+          </div>
+          <div style="width: 52px; height: 52px; border-radius: 50%; background: #f7f4ed; display: flex; align-items: center; justify-content: center;">
+            <div style="width: 17px; height: 17px; border-radius: 5px; background: #d95c40;"></div>
+          </div>
+          <div style="width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid #4d4030; display: flex; align-items: center; justify-content: center;">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="#b3a48c" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 L6.5 12 L13 4.5"></path></svg>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
+        <span style="font-family: 'Spline Sans Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: 0.08em; color: #6b5f4f;">LISTENING</span>
+        <span style="font-size: 12.5px; color: #776a56; text-align: center; max-width: 320px;">Espresso panel: cancel, stop-and-insert, keep. Audio records in the main app; the keyboard is the trigger.</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+</body>
+</html>
