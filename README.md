@@ -141,6 +141,7 @@ Upstream: https://github.com/OpenWhispr/openwhispr
 2. Keep local dictation as the default path with zero paywall UX
 3. Optionally simplify onboarding (skip cloud account)
 4. VoiceInk-inspired extras later: stronger per-app modes, dictionary UX
+5. iPhone version — see [docs/IOS.md](docs/IOS.md) (fork of VivaDicta, rebranded)
 
 ## License
 
