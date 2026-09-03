@@ -1666,7 +1666,11 @@ export default function SettingsPage({
                   <SettingsPanelRow>
                     <SettingsRow
                       label={t("settingsPage.account.notSignedIn")}
-                      description={t("settingsPage.account.notSignedInDescription")}
+                      description={
+                        PROMOTIONS_ENABLED
+                          ? t("settingsPage.account.notSignedInDescription")
+                          : t("settingsPage.account.localFirstDescription")
+                      }
                     >
                       <Badge variant="outline">{t("settingsPage.account.offline")}</Badge>
                     </SettingsRow>

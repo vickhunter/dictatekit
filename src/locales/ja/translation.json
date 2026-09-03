@@ -1134,6 +1134,7 @@
       "notConfigured": "認証が設定されていません",
       "notSignedIn": "サインインしていません",
       "notSignedInDescription": "アカウントを作成してプレミアム機能をアンロックしましょう。",
+      "localFirstDescription": "DictateKit はアカウントなしで完全に利用できます。音声入力はデバイス上で実行され、アカウントはオプションのクラウド機能にのみ必要です。",
       "offline": "オフライン",
       "pastDue": {
         "description": "現在は無料プランをご利用中です。お支払い方法を更新して Pro に戻しましょう。",
@@ -2943,6 +2944,12 @@
     "copy": "コピー",
     "copied": "コピー済み",
     "waitingForInput": "何か話してください..."
+  },
+  "parakeetSetup": {
+    "downloadingTitle": "Parakeet v3 をセットアップ中",
+    "downloadingBody": "推奨のローカルモデル（約 680 MB）をバックグラウンドでダウンロードしています。完了するまで、音声入力は Whisper で動作し続けます。",
+    "readyTitle": "Parakeet v3 の準備ができました",
+    "readyBody": "音声入力はデバイス上で NVIDIA Parakeet v3 を使用するようになりました。「設定 → 音声認識」からいつでも変更できます。"
   },
   "transcript": {
     "speaker": {

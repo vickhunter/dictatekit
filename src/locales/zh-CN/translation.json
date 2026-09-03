@@ -1134,6 +1134,7 @@
       "notConfigured": "身份验证未配置",
       "notSignedIn": "未登录",
       "notSignedInDescription": "创建账户以解锁高级功能。",
+      "localFirstDescription": "DictateKit 无需账户即可完整使用——听写在你的设备上运行。账户仅用于可选的云端功能。",
       "offline": "离线",
       "pastDue": {
         "description": "你目前使用的是免费版。更新支付方式即可恢复 Pro 版。",
@@ -2938,6 +2939,12 @@
     "copy": "复制",
     "copied": "已复制",
     "waitingForInput": "说点什么..."
+  },
+  "parakeetSetup": {
+    "downloadingTitle": "正在设置 Parakeet v3",
+    "downloadingBody": "正在后台下载推荐的本地模型（约 680 MB）。在完成之前，听写将继续使用 Whisper。",
+    "readyTitle": "Parakeet v3 已就绪",
+    "readyBody": "听写现在完全在本设备上使用 NVIDIA Parakeet v3。可随时在“设置 → 语音转文字”中更改。"
   },
   "transcript": {
     "speaker": {

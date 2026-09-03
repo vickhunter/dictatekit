@@ -1113,6 +1113,7 @@
       "notConfigured": "A autenticação não está configurada",
       "notSignedIn": "Não conectado",
       "notSignedInDescription": "Crie uma conta para desbloquear recursos premium.",
+      "localFirstDescription": "O DictateKit funciona totalmente sem conta — o ditado é executado no seu dispositivo. Uma conta só é necessária para recursos opcionais na nuvem.",
       "offline": "Offline",
       "pastDue": {
         "description": "Você está no plano gratuito por enquanto. Atualize sua forma de pagamento para voltar ao Pro.",
@@ -2943,6 +2944,12 @@
     "copy": "Copiar",
     "copied": "Copiado",
     "waitingForInput": "Diga algo..."
+  },
+  "parakeetSetup": {
+    "downloadingTitle": "Configurando o Parakeet v3",
+    "downloadingBody": "Baixando o modelo local recomendado (~680 MB) em segundo plano. O ditado continua funcionando com o Whisper até ficar pronto.",
+    "readyTitle": "O Parakeet v3 está pronto",
+    "readyBody": "O ditado agora usa o NVIDIA Parakeet v3, totalmente no seu dispositivo. Você pode alterar isso em Configurações → Fala para texto."
   },
   "transcript": {
     "speaker": {

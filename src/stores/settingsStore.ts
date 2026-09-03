@@ -902,15 +902,16 @@ export const MAX_TRANSLATION_TARGETS = 5;
 
 export const useSettingsStore = create<SettingsState>()((set, get) => ({
   uiLanguage: normalizeUiLanguage(isBrowser ? localStorage.getItem("uiLanguage") : null),
-  useLocalWhisper: readBoolean("useLocalWhisper", false),
+  // Local-first fork: dictation is on-device unless the user explicitly
+  // switches to a cloud provider (onboarding and Settings both persist an
+  // explicit choice, so this default only decides the out-of-box state).
+  useLocalWhisper: readBoolean("useLocalWhisper", true),
   whisperModel: readString("whisperModel", "base"),
-  // Parakeet TDT v3 is the recommended local model for new installs; existing
-  // setups (already-completed onboarding) keep whisper unless they opted in,
-  // so a default flip can never strand a user on a provider with no model.
-  localTranscriptionProvider: (readString(
-    "localTranscriptionProvider",
-    isBrowser && localStorage.getItem("hasCompletedOnboarding") === "true" ? "whisper" : "nvidia"
-  ) === "nvidia"
+  // Parakeet TDT v3 is the default local engine. This can never strand a
+  // user on a provider with no model: audioManager falls back to whisper at
+  // dictation time while the model is missing, and useParakeetAutoSetup
+  // downloads it in the background on launch.
+  localTranscriptionProvider: (readString("localTranscriptionProvider", "nvidia") === "nvidia"
     ? "nvidia"
     : "whisper") as LocalTranscriptionProvider,
   parakeetModel: readString("parakeetModel", "parakeet-tdt-0.6b-v3"),
@@ -1063,7 +1064,9 @@ export const useSettingsStore = create<SettingsState>()((set, get) => ({
     if (v === "bottom-right" || v === "center" || v === "bottom-left") return v;
     return "bottom-right" as const;
   })(),
-  showTranscriptionPreview: readBoolean("showTranscriptionPreview", false),
+  // Live transcript while dictating is on by default; the toggle in
+  // Settings → Preferences turns it off for users who find it distracting.
+  showTranscriptionPreview: readBoolean("showTranscriptionPreview", true),
   autoPasteEnabled: readBoolean("autoPasteEnabled", true),
   keepTranscriptionInClipboard: readBoolean("keepTranscriptionInClipboard", false),
   noteFilesEnabled: readBoolean("noteFilesEnabled", false),
