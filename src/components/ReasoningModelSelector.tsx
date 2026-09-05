@@ -340,7 +340,9 @@ export default function ReasoningModelSelector({
   const setTinfoilApiKey = useSettingsStore((s) => s.setTinfoilApiKey);
   const cortiApiKey = useSettingsStore((s) => s.cortiApiKey);
   const setCortiApiKey = useSettingsStore((s) => s.setCortiApiKey);
-  const [selectedMode, setSelectedMode] = useState<"cloud" | "local">(mode || "cloud");
+  // Local-first: when nothing is configured yet, open on the Local tab; the
+  // effect below switches to the matching tab once a provider is configured.
+  const [selectedMode, setSelectedMode] = useState<"cloud" | "local">(mode || "local");
   const [selectedCloudProvider, setSelectedCloudProvider] = useState("openai");
   const [selectedLocalProvider, setSelectedLocalProvider] = useState("qwen");
   const {
@@ -419,10 +421,16 @@ export default function ReasoningModelSelector({
       setSelectedMode("local");
       setSelectedLocalProvider(localReasoningProvider);
     } else if (CLOUD_PROVIDER_IDS.includes(localReasoningProvider)) {
-      setSelectedMode("cloud");
+      // Only pull the view to the Cloud tab when a cloud model is actually
+      // configured; an unconfigured panel stays on the local-first default
+      // (the stored provider defaults to a cloud id even for users who never
+      // set anything up).
+      if (reasoningModel) {
+        setSelectedMode("cloud");
+      }
       setSelectedCloudProvider(localReasoningProvider);
     }
-  }, [localProviders, localReasoningProvider]);
+  }, [localProviders, localReasoningProvider, reasoningModel]);
 
   const [downloadedModels, setDownloadedModels] = useState<Set<string>>(new Set());
 

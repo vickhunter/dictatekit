@@ -974,7 +974,27 @@ registerProcessor("pcm-streaming-processor", PCMStreamingProcessor);
       let result;
       let activeModel;
       if (useLocalWhisper) {
+        let effectiveLocalProvider = localProvider;
         if (localProvider === "nvidia") {
+          // Parakeet is the default engine but its model downloads in the
+          // background after install; until it is on disk, dictate with
+          // whisper instead of failing the recording.
+          try {
+            const status = await window.electronAPI.checkParakeetModelStatus?.(parakeetModel);
+            if (status?.success && status.downloaded === false) {
+              effectiveLocalProvider = "whisper";
+              logger.debug(
+                "Parakeet model not downloaded yet, using whisper for this dictation",
+                { parakeetModel, whisperModel },
+                "transcription"
+              );
+            }
+          } catch {
+            // Status check failing must not block dictation; the Parakeet
+            // path below reports the real error if the model is unusable.
+          }
+        }
+        if (effectiveLocalProvider === "nvidia") {
           activeModel = parakeetModel;
           result = await this.processWithLocalParakeet(audioBlob, parakeetModel, metadata);
         } else {

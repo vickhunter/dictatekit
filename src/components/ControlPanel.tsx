@@ -6,6 +6,7 @@ import PostMigrationOnboarding from "./PostMigrationOnboarding";
 import { ConfirmDialog, AlertDialog } from "./ui/dialog";
 import { useDialogs } from "../hooks/useDialogs";
 import { useHotkey } from "../hooks/useHotkey";
+import { useParakeetAutoSetup } from "../hooks/useParakeetAutoSetup";
 import { useToast } from "./ui/useToast";
 import { useUpdater } from "../hooks/useUpdater";
 import { useSettings } from "../hooks/useSettings";
@@ -121,6 +122,7 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
   } = useSettings();
   const { isSignedIn, isLoaded: authLoaded, user } = useAuth();
   const usage = useUsage();
+  useParakeetAutoSetup();
 
   const {
     status: updateStatus,

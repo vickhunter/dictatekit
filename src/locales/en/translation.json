@@ -1307,6 +1307,7 @@
       "notConfigured": "Authentication is not configured",
       "notSignedIn": "Not signed in",
       "notSignedInDescription": "Create an account to unlock premium features.",
+      "localFirstDescription": "DictateKit works fully without an account — dictation runs on your device. An account is only needed for optional cloud features.",
       "offline": "Offline",
       "pastDue": {
         "description": "You're on the free plan for now. Update your payment method to get back to Pro.",
@@ -2991,6 +2992,12 @@
     "copy": "Copy",
     "copied": "Copied",
     "waitingForInput": "Say something..."
+  },
+  "parakeetSetup": {
+    "downloadingTitle": "Setting up Parakeet v3",
+    "downloadingBody": "Downloading the recommended local model (~680 MB) in the background. Dictation keeps working with Whisper until it's ready.",
+    "readyTitle": "Parakeet v3 is ready",
+    "readyBody": "Dictation now runs on NVIDIA Parakeet v3, fully on-device. Change this anytime in Settings → Speech-to-Text."
   },
   "transcript": {
     "speaker": {
