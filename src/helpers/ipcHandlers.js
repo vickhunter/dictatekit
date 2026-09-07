@@ -4310,6 +4310,7 @@ class IPCHandlers {
             const model =
               settings.parakeetModel || process.env.PARAKEET_MODEL || "parakeet-tdt-0.6b-v3";
             result = await this.parakeetManager.transcribeLocalParakeet(buffer, { model });
+            if (result) result = { ...result, source: "local-parakeet", model };
           } else if (this.whisperManager?.serverManager?.isAvailable?.()) {
             const vadOptions = this._resolveWhisperVadOptions("noteRecording");
             result = await this.whisperManager.transcribeLocalWhisper(buffer, {
@@ -4317,6 +4318,9 @@ class IPCHandlers {
               language,
               ...vadOptions,
             });
+            if (result) {
+              result = { ...result, source: "local-whisper", model: settings.whisperModel };
+            }
           }
         } else if (settings?.cloudTranscriptionMode === "dictatekit") {
           const win = BrowserWindow.fromWebContents(event.sender);

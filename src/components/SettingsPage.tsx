@@ -260,21 +260,9 @@ function TranscriptionSection({
 }: TranscriptionSectionProps) {
   const { t } = useTranslation();
 
+  // Local-first ordering: on-device options lead, the account-gated cloud
+  // tier comes last.
   const transcriptionModes: InferenceModeOption[] = [
-    {
-      id: "dictatekit",
-      label: t("settingsPage.transcription.modes.dictatekit"),
-      description: t("settingsPage.transcription.modes.dictatekitDesc"),
-      icon: <Cloud className="w-4 h-4" />,
-      disabled: !isSignedIn,
-      badge: !isSignedIn ? t("common.freeAccountRequired") : undefined,
-    },
-    {
-      id: "providers",
-      label: t("settingsPage.transcription.modes.providers"),
-      description: t("settingsPage.transcription.modes.providersDesc"),
-      icon: <Key className="w-4 h-4" />,
-    },
     {
       id: "local",
       label: t("settingsPage.transcription.modes.local"),
@@ -286,6 +274,20 @@ function TranscriptionSection({
       label: t("settingsPage.transcription.modes.selfHosted"),
       description: t("settingsPage.transcription.modes.selfHostedDesc"),
       icon: <Network className="w-4 h-4" />,
+    },
+    {
+      id: "providers",
+      label: t("settingsPage.transcription.modes.providers"),
+      description: t("settingsPage.transcription.modes.providersDesc"),
+      icon: <Key className="w-4 h-4" />,
+    },
+    {
+      id: "dictatekit",
+      label: t("settingsPage.transcription.modes.dictatekit"),
+      description: t("settingsPage.transcription.modes.dictatekitDesc"),
+      icon: <Cloud className="w-4 h-4" />,
+      disabled: !isSignedIn,
+      badge: !isSignedIn ? t("common.freeAccountRequired") : undefined,
     },
   ];
 
@@ -839,6 +841,7 @@ export default function SettingsPage({
     installUpdate: installUpdateAction,
     getAppVersion,
     error: updateError,
+    errorIsUserInitiated: updateErrorIsUserInitiated,
     clearError: clearUpdateError,
   } = useUpdater();
 
@@ -1198,13 +1201,18 @@ export default function SettingsPage({
 
   useEffect(() => {
     if (updateError) {
-      showAlertDialog({
-        title: t("settingsPage.general.updates.dialogs.updateError.title"),
-        description: t("settingsPage.general.updates.dialogs.updateError.description"),
-      });
+      // Background auto-checks fail routinely offline and on unsigned builds
+      // (which can never self-update) — only actions the user started earn a
+      // dialog; everything else clears silently.
+      if (updateErrorIsUserInitiated) {
+        showAlertDialog({
+          title: t("settingsPage.general.updates.dialogs.updateError.title"),
+          description: t("settingsPage.general.updates.dialogs.updateError.description"),
+        });
+      }
       clearUpdateError();
     }
-  }, [updateError, showAlertDialog, clearUpdateError, t]);
+  }, [updateError, updateErrorIsUserInitiated, showAlertDialog, clearUpdateError, t]);
 
   useEffect(() => {
     if (installInitiated) {

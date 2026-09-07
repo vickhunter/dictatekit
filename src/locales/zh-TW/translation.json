@@ -399,6 +399,10 @@
         "recordingWithDuration": "已捨棄的錄音 · {{duration}}",
         "recover": "復原",
         "recovered": "已復原"
+      },
+      "retryMenu": {
+        "currentEngine": "目前引擎",
+        "downloadedModels": "已下載的模型"
       }
     },
     "cloudMigration": {

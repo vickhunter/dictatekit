@@ -32,6 +32,7 @@ import MeetingRecordingPill from "./notes/MeetingRecordingPill";
 import WindowControls from "./WindowControls";
 
 import { getCachedPlatform } from "../utils/platform";
+import type { RetryEngine } from "../utils/engineLabel";
 import { isAccessibilitySkipped } from "../utils/permissions";
 import {
   setActiveNoteId,
@@ -132,6 +133,7 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
     downloadUpdate,
     installUpdate,
     error: updateError,
+    errorIsUserInitiated: updateErrorIsUserInitiated,
   } = useUpdater();
 
   const {
@@ -215,7 +217,13 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
   }, [updateStatus.updateDownloaded, isDownloading, toast, t]);
 
   useEffect(() => {
-    if (updateError && updateError !== updateErrorToastShown.current) {
+    // Background auto-check failures stay silent (routine when offline or on
+    // unsigned builds); only errors from user-started update actions toast.
+    if (
+      updateError &&
+      updateErrorIsUserInitiated &&
+      updateError !== updateErrorToastShown.current
+    ) {
       updateErrorToastShown.current = updateError;
       toast({
         title: t("controlPanel.update.problemTitle"),
@@ -226,7 +234,7 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
     if (!updateError) {
       updateErrorToastShown.current = null;
     }
-  }, [updateError, toast, t]);
+  }, [updateError, updateErrorIsUserInitiated, toast, t]);
 
   useEffect(() => {
     if (!usage?.isPastDue || !usage.hasLoaded) return;
@@ -477,20 +485,23 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
   );
 
   const retryTranscription = useCallback(
-    async (id: number, options?: { isRecover?: boolean }) => {
+    async (id: number, options?: { isRecover?: boolean; engine?: RetryEngine }) => {
       try {
         const s = useSettingsStore.getState();
+        // A chosen engine forces the local route for this one retry; without
+        // one, the retry follows the user's current transcription settings.
+        const engine = options?.engine;
         const result = await window.electronAPI.retryTranscription(id, {
-          useLocalWhisper: s.useLocalWhisper,
-          localTranscriptionProvider: s.localTranscriptionProvider,
+          useLocalWhisper: engine ? true : s.useLocalWhisper,
+          localTranscriptionProvider: engine ? engine.provider : s.localTranscriptionProvider,
           cloudTranscriptionMode: s.cloudTranscriptionMode,
           cloudTranscriptionProvider: s.cloudTranscriptionProvider,
           cloudTranscriptionModel: s.cloudTranscriptionModel,
           cloudTranscriptionBaseUrl: s.cloudTranscriptionBaseUrl,
-          parakeetModel: s.parakeetModel,
-          whisperModel: s.whisperModel,
+          parakeetModel: engine?.provider === "nvidia" ? engine.model : s.parakeetModel,
+          whisperModel: engine?.provider === "whisper" ? engine.model : s.whisperModel,
           preferredLanguage: s.preferredLanguage,
-          transcriptionMode: s.transcriptionMode,
+          transcriptionMode: engine ? "local" : s.transcriptionMode,
           remoteTranscriptionType: s.remoteTranscriptionType,
           remoteTranscriptionUrl: s.remoteTranscriptionUrl,
           remoteTranscriptionModel: s.remoteTranscriptionModel,

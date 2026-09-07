@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Loader2, Sparkles, Cloud, X, Mic, Trash2, Archive } from "lucide-react";
@@ -10,6 +10,7 @@ import { cn } from "./lib/utils";
 import { useUpcomingEvents } from "../hooks/useUpcomingEvents";
 import UpcomingMeetings from "./UpcomingMeetings";
 import { useSettingsStore } from "../stores/settingsStore";
+import { engineLabel, type RetryEngine } from "../utils/engineLabel";
 
 interface HistoryViewProps {
   history: TranscriptionItemType[];
@@ -25,7 +26,10 @@ interface HistoryViewProps {
   clearAllTranscriptions: () => void;
   onOpenSettings: (section?: string) => void;
   onShowAudioInFolder: (id: number) => void;
-  onRetryTranscription: (id: number, options?: { isRecover?: boolean }) => Promise<void>;
+  onRetryTranscription: (
+    id: number,
+    options?: { isRecover?: boolean; engine?: RetryEngine }
+  ) => Promise<void>;
   showDiscarded: boolean;
   onToggleDiscarded: () => void;
 }
@@ -51,6 +55,52 @@ export default function HistoryView({
   const { t } = useTranslation();
   const dataRetentionEnabled = useSettingsStore((s) => s.dataRetentionEnabled);
   const { events, isLoading: eventsLoading, isConnected } = useUpcomingEvents();
+
+  // Downloaded local engines for the per-item "retry with model" menu.
+  const [retryEngines, setRetryEngines] = useState<RetryEngine[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const engines: RetryEngine[] = [];
+      try {
+        const whisper = await window.electronAPI?.listWhisperModels?.();
+        if (whisper?.success) {
+          for (const m of whisper.models) {
+            if (m.downloaded) {
+              engines.push({
+                provider: "whisper",
+                model: m.model,
+                label: engineLabel("whisper", m.model) ?? m.model,
+              });
+            }
+          }
+        }
+      } catch {
+        // Model listing is best-effort; the plain retry button still works.
+      }
+      try {
+        const parakeet = await window.electronAPI?.listParakeetModels?.();
+        if (parakeet?.success) {
+          for (const m of parakeet.models) {
+            if (m.downloaded) {
+              engines.push({
+                provider: "nvidia",
+                model: m.model,
+                label: engineLabel("nvidia", m.model) ?? m.model,
+              });
+            }
+          }
+        }
+      } catch {
+        // Same: fall back to current-engine retry only.
+      }
+      if (!cancelled) setRetryEngines(engines);
+    };
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const weekStats = useMemo(() => {
     const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
@@ -377,6 +427,7 @@ export default function HistoryView({
                           onShowAudioInFolder={onShowAudioInFolder}
                           onRetryTranscription={onRetryTranscription}
                           onOpenSettings={() => onOpenSettings("transcription")}
+                          retryEngines={retryEngines}
                         />
                       ))}
                     </div>
