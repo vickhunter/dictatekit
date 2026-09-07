@@ -132,6 +132,7 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
     downloadUpdate,
     installUpdate,
     error: updateError,
+    errorIsUserInitiated: updateErrorIsUserInitiated,
   } = useUpdater();
 
   const {
@@ -215,7 +216,13 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
   }, [updateStatus.updateDownloaded, isDownloading, toast, t]);
 
   useEffect(() => {
-    if (updateError && updateError !== updateErrorToastShown.current) {
+    // Background auto-check failures stay silent (routine when offline or on
+    // unsigned builds); only errors from user-started update actions toast.
+    if (
+      updateError &&
+      updateErrorIsUserInitiated &&
+      updateError !== updateErrorToastShown.current
+    ) {
       updateErrorToastShown.current = updateError;
       toast({
         title: t("controlPanel.update.problemTitle"),
@@ -226,7 +233,7 @@ export default function ControlPanel({ initialSettingsSection }: ControlPanelPro
     if (!updateError) {
       updateErrorToastShown.current = null;
     }
-  }, [updateError, toast, t]);
+  }, [updateError, updateErrorIsUserInitiated, toast, t]);
 
   useEffect(() => {
     if (!usage?.isPastDue || !usage.hasLoaded) return;

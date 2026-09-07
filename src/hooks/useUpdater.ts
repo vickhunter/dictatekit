@@ -21,7 +21,16 @@ interface UpdateState {
   isDownloading: boolean;
   isInstalling: boolean;
   error: Error | null;
+  /** True when `error` came from an update action the user explicitly
+   * started. Errors from background auto-checks (startup, unsigned builds
+   * that can never self-update) keep this false so the UI stays quiet. */
+  errorIsUserInitiated: boolean;
 }
+
+// Flipped on when the user explicitly starts a check/download from the UI,
+// off again when any terminal updater event arrives. Errors that surface
+// while it is off came from background activity.
+let userInitiatedAction = false;
 
 let globalState: UpdateState = {
   status: {
@@ -35,6 +44,7 @@ let globalState: UpdateState = {
   isDownloading: false,
   isInstalling: false,
   error: null,
+  errorIsUserInitiated: false,
 };
 
 const stateListeners = new Set<(state: UpdateState) => void>();
@@ -59,6 +69,7 @@ function registerEventListeners() {
 
   if (window.electronAPI.onUpdateAvailable) {
     const dispose = window.electronAPI.onUpdateAvailable((_event, info) => {
+      userInitiatedAction = false;
       updateGlobalState({
         status: { ...globalState.status, updateAvailable: true },
         info: info || globalState.info,
@@ -69,6 +80,7 @@ function registerEventListeners() {
 
   if (window.electronAPI.onUpdateNotAvailable) {
     const dispose = window.electronAPI.onUpdateNotAvailable(() => {
+      userInitiatedAction = false;
       // Preserve downloaded state — don't nuke a pending install
       const keepDownloaded = globalState.status.updateDownloaded;
       updateGlobalState({
@@ -86,6 +98,7 @@ function registerEventListeners() {
 
   if (window.electronAPI.onUpdateDownloaded) {
     const dispose = window.electronAPI.onUpdateDownloaded((_event, info) => {
+      userInitiatedAction = false;
       updateGlobalState({
         status: { ...globalState.status, updateDownloaded: true },
         info: info || globalState.info,
@@ -109,11 +122,14 @@ function registerEventListeners() {
 
   if (window.electronAPI.onUpdateError) {
     const dispose = window.electronAPI.onUpdateError((_event, error) => {
+      const wasUserInitiated = userInitiatedAction;
+      userInitiatedAction = false;
       updateGlobalState({
         isChecking: false,
         isDownloading: false,
         isInstalling: false,
         error: error instanceof Error ? error : new Error(String(error)),
+        errorIsUserInitiated: wasUserInitiated,
       });
     });
     if (dispose) cleanupFunctions.push(dispose);
@@ -163,15 +179,18 @@ export function useUpdater() {
   }, []);
 
   const checkForUpdates = useCallback(async () => {
-    updateGlobalState({ isChecking: true, error: null });
+    userInitiatedAction = true;
+    updateGlobalState({ isChecking: true, error: null, errorIsUserInitiated: false });
     try {
       const result = await window.electronAPI.checkForUpdates();
       updateGlobalState({ isChecking: false });
       return result;
     } catch (error) {
+      userInitiatedAction = false;
       updateGlobalState({
         isChecking: false,
         error: error instanceof Error ? error : new Error(String(error)),
+        errorIsUserInitiated: true,
       });
       throw error;
     }
@@ -182,14 +201,22 @@ export function useUpdater() {
       return { success: true, message: "Update already downloaded" };
     }
 
-    updateGlobalState({ isDownloading: true, downloadProgress: 0, error: null });
+    userInitiatedAction = true;
+    updateGlobalState({
+      isDownloading: true,
+      downloadProgress: 0,
+      error: null,
+      errorIsUserInitiated: false,
+    });
     try {
       const result = await window.electronAPI.downloadUpdate();
       return result;
     } catch (error) {
+      userInitiatedAction = false;
       updateGlobalState({
         isDownloading: false,
         error: error instanceof Error ? error : new Error(String(error)),
+        errorIsUserInitiated: true,
       });
       throw error;
     }
@@ -200,7 +227,8 @@ export function useUpdater() {
       throw new Error("No update available to install");
     }
 
-    updateGlobalState({ isInstalling: true, error: null });
+    userInitiatedAction = true;
+    updateGlobalState({ isInstalling: true, error: null, errorIsUserInitiated: false });
     isInstallingRef.current = true;
 
     try {
@@ -214,14 +242,17 @@ export function useUpdater() {
             error: new Error(
               "Install timed out. Please restart the app manually to apply the update."
             ),
+            errorIsUserInitiated: true,
           });
         }
       }, 10000);
     } catch (error) {
       isInstallingRef.current = false;
+      userInitiatedAction = false;
       updateGlobalState({
         isInstalling: false,
         error: error instanceof Error ? error : new Error(String(error)),
+        errorIsUserInitiated: true,
       });
       throw error;
     }
@@ -239,7 +270,7 @@ export function useUpdater() {
 
   const clearError = useCallback(() => {
     if (globalState.error) {
-      updateGlobalState({ error: null });
+      updateGlobalState({ error: null, errorIsUserInitiated: false });
     }
   }, []);
 
@@ -251,6 +282,7 @@ export function useUpdater() {
     isDownloading: state.isDownloading,
     isInstalling: state.isInstalling,
     error: state.error,
+    errorIsUserInitiated: state.errorIsUserInitiated,
     checkForUpdates,
     downloadUpdate,
     installUpdate,
