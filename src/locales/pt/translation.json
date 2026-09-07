@@ -378,6 +378,10 @@
         "recordingWithDuration": "Gravação descartada · {{duration}}",
         "recover": "Recuperar",
         "recovered": "Recuperada"
+      },
+      "retryMenu": {
+        "currentEngine": "Motor atual",
+        "downloadedModels": "Modelos baixados"
       }
     },
     "cloudMigration": {

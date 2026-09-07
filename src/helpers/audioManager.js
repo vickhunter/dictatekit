@@ -2754,6 +2754,10 @@ registerProcessor("pcm-streaming-processor", PCMStreamingProcessor);
       const result = await window.electronAPI.saveTranscription(text, rawText, {
         clientTranscriptionId,
         routeKind: this.translationRequested ? "translation" : null,
+        // Persist which engine produced this row even when audio isn't kept,
+        // so history can label every transcription with its model.
+        provider: this.lastAudioMetadata?.provider ?? null,
+        model: this.lastAudioMetadata?.model ?? null,
       });
       if (result?.id) syncService.debouncedPush("transcription", result.id);
 

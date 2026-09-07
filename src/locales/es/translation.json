@@ -399,7 +399,11 @@
       "retryError": "Error al volver a transcribir",
       "audioNotFound": "Archivo de audio no encontrado o expirado",
       "noAiProcessing": "No se aplicó procesamiento de IA a esta transcripción",
-      "rawTranscript": "Transcripción sin procesar"
+      "rawTranscript": "Transcripción sin procesar",
+      "retryMenu": {
+        "currentEngine": "Motor actual",
+        "downloadedModels": "Modelos descargados"
+      }
     },
     "cloudMigration": {
       "title": "Bienvenido a DictateKit Cloud",

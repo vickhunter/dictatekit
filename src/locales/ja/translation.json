@@ -399,6 +399,10 @@
         "recordingWithDuration": "破棄した録音 · {{duration}}",
         "recover": "復元",
         "recovered": "復元しました"
+      },
+      "retryMenu": {
+        "currentEngine": "現在のエンジン",
+        "downloadedModels": "ダウンロード済みモデル"
       }
     },
     "cloudMigration": {

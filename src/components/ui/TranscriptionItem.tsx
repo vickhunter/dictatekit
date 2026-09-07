@@ -16,9 +16,18 @@ import type {
   TranscriptionItem as TranscriptionItemType,
   TranscriptionErrorCode,
 } from "../../types/electron";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "./dropdown-menu";
 import { cn } from "../lib/utils";
 import { getCachedPlatform } from "../../utils/platform";
 import { formatMmSs } from "../../utils/formatDuration";
+import { engineLabel, type RetryEngine } from "../../utils/engineLabel";
 
 const platform = getCachedPlatform();
 
@@ -33,8 +42,13 @@ interface TranscriptionItemProps {
   onCopy: (text: string) => void;
   onDelete: (id: number) => void;
   onShowAudioInFolder?: (id: number) => void;
-  onRetryTranscription?: (id: number, options?: { isRecover?: boolean }) => Promise<void>;
+  onRetryTranscription?: (
+    id: number,
+    options?: { isRecover?: boolean; engine?: RetryEngine }
+  ) => Promise<void>;
   onOpenSettings?: () => void;
+  /** Downloaded local engines offered when retrying from saved audio. */
+  retryEngines?: RetryEngine[];
 }
 
 export default function TranscriptionItem({
@@ -44,6 +58,7 @@ export default function TranscriptionItem({
   onShowAudioInFolder,
   onRetryTranscription,
   onOpenSettings,
+  retryEngines = [],
 }: TranscriptionItemProps) {
   const { t, i18n } = useTranslation();
   const [isHovered, setIsHovered] = useState(false);
@@ -59,11 +74,11 @@ export default function TranscriptionItem({
         minute: "2-digit",
       });
 
-  const handleRetry = async () => {
+  const handleRetry = async (engine?: RetryEngine) => {
     if (isRetrying || !onRetryTranscription) return;
     setIsRetrying(true);
     try {
-      await onRetryTranscription(item.id, { isRecover: item.status === "discarded" });
+      await onRetryTranscription(item.id, { isRecover: item.status === "discarded", engine });
     } finally {
       setIsRetrying(false);
     }
@@ -86,6 +101,70 @@ export default function TranscriptionItem({
     errorCode === "MODEL_NOT_AVAILABLE";
   const isLimitError = errorCode === "LIMIT_REACHED";
   const isOfflineError = errorCode === "OFFLINE";
+
+  const engineName = engineLabel(item.provider ?? null, item.model ?? null);
+
+  const renderRetryControl = (destructive: boolean) => {
+    const tooltipKey =
+      item.route_kind === "translation"
+        ? "controlPanel.history.retryTranslationMode"
+        : "controlPanel.history.retryTranscription";
+    const buttonClass = destructive
+      ? "h-6 w-6 rounded-sm text-destructive hover:text-destructive hover:bg-destructive/10"
+      : "h-6 w-6 rounded-sm text-muted-foreground hover:text-primary hover:bg-primary/10";
+    const icon = isRetrying ? (
+      <Loader2 size={12} className="animate-spin" />
+    ) : (
+      <RotateCcw size={12} />
+    );
+
+    // Translation retries re-run the cleanup+translate chain; keep those
+    // single-action so the engine menu never bypasses that pipeline.
+    if (retryEngines.length === 0 || item.route_kind === "translation") {
+      return (
+        <Tooltip content={t(tooltipKey)}>
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => handleRetry()}
+            disabled={isRetrying}
+            className={buttonClass}
+          >
+            {icon}
+          </Button>
+        </Tooltip>
+      );
+    }
+
+    return (
+      <DropdownMenu>
+        <Tooltip content={t(tooltipKey)}>
+          <DropdownMenuTrigger asChild>
+            <Button size="icon" variant="ghost" disabled={isRetrying} className={buttonClass}>
+              {icon}
+            </Button>
+          </DropdownMenuTrigger>
+        </Tooltip>
+        <DropdownMenuContent align="end" className="min-w-44">
+          <DropdownMenuItem onClick={() => handleRetry()}>
+            {t("controlPanel.history.retryMenu.currentEngine")}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel className="text-[10px] uppercase tracking-wide text-muted-foreground">
+            {t("controlPanel.history.retryMenu.downloadedModels")}
+          </DropdownMenuLabel>
+          {retryEngines.map((engine) => (
+            <DropdownMenuItem
+              key={`${engine.provider}:${engine.model}`}
+              onClick={() => handleRetry(engine)}
+            >
+              {engine.label}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
 
   return (
     <div
@@ -171,9 +250,16 @@ export default function TranscriptionItem({
             </span>
           </div>
         ) : (
-          <p className="flex-1 min-w-0 text-foreground text-sm leading-normal wrap-break-word whitespace-pre-wrap">
-            {item.text}
-          </p>
+          <div className="flex-1 min-w-0">
+            <p className="text-foreground text-sm leading-normal wrap-break-word whitespace-pre-wrap">
+              {item.text}
+            </p>
+            {engineName && (
+              <span className="mt-1 inline-block rounded-sm bg-muted/60 px-1 py-px font-mono text-[9.5px] uppercase tracking-wide text-muted-foreground/70">
+                {engineName}
+              </span>
+            )}
+          </div>
         )}
 
         <div
@@ -187,7 +273,7 @@ export default function TranscriptionItem({
               <Button
                 size="icon"
                 variant="ghost"
-                onClick={handleRetry}
+                onClick={() => handleRetry()}
                 disabled={isRetrying}
                 className="h-6 w-6 rounded-sm text-muted-foreground hover:text-primary hover:bg-primary/10"
               >
@@ -199,29 +285,7 @@ export default function TranscriptionItem({
               </Button>
             </Tooltip>
           )}
-          {isFailed && hasAudio && (
-            <Tooltip
-              content={t(
-                item.route_kind === "translation"
-                  ? "controlPanel.history.retryTranslationMode"
-                  : "controlPanel.history.retryTranscription"
-              )}
-            >
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={handleRetry}
-                disabled={isRetrying}
-                className="h-6 w-6 rounded-sm text-destructive hover:text-destructive hover:bg-destructive/10"
-              >
-                {isRetrying ? (
-                  <Loader2 size={12} className="animate-spin" />
-                ) : (
-                  <RotateCcw size={12} />
-                )}
-              </Button>
-            </Tooltip>
-          )}
+          {isFailed && hasAudio && renderRetryControl(true)}
           {!isFailed && !isDiscarded && hasRawText && (
             <Tooltip content={t("controlPanel.history.viewRawTranscript")}>
               <Button
@@ -249,29 +313,7 @@ export default function TranscriptionItem({
               </Button>
             </Tooltip>
           )}
-          {!isFailed && !isDiscarded && hasAudio && (
-            <Tooltip
-              content={t(
-                item.route_kind === "translation"
-                  ? "controlPanel.history.retryTranslationMode"
-                  : "controlPanel.history.retryTranscription"
-              )}
-            >
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={handleRetry}
-                disabled={isRetrying}
-                className="h-6 w-6 rounded-sm text-muted-foreground hover:text-primary hover:bg-primary/10"
-              >
-                {isRetrying ? (
-                  <Loader2 size={12} className="animate-spin" />
-                ) : (
-                  <RotateCcw size={12} />
-                )}
-              </Button>
-            </Tooltip>
-          )}
+          {!isFailed && !isDiscarded && hasAudio && renderRetryControl(false)}
           {showUtilityGroup && <div className="w-px h-3 bg-border/30" />}
           {!isFailed && !isDiscarded && (
             <Tooltip content={t("controlPanel.history.copyText")}>

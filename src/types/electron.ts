@@ -542,6 +542,9 @@ declare global {
           errorMessage?: string | null;
           errorCode?: TranscriptionErrorCode;
           clientTranscriptionId?: string;
+          routeKind?: string | null;
+          provider?: string | null;
+          model?: string | null;
         }
       ) => Promise<{ id: number; success: boolean; transcription?: TranscriptionItem }>;
       getTranscriptions: (
